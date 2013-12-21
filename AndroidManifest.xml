@@ -17,5 +17,9 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <provider
+            android:name=".contentprovider.DevlifeProvider"
+            android:authorities="com.kvest.developerslife.contentprovider.DevlifeProvider" />
     </application>
 </manifest>

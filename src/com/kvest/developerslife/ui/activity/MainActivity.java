@@ -1,12 +1,16 @@
 package com.kvest.developerslife.ui.activity;
 
 import android.app.Activity;
+import android.content.ContentValues;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.kvest.developerslife.R;
+import com.kvest.developerslife.contentprovider.DevlifeProviderMetadata;
+import com.kvest.developerslife.datastorage.table.PostTable;
 import com.kvest.developerslife.network.VolleyHelper;
 import com.kvest.developerslife.network.request.GetPostsListRequest;
 
@@ -36,19 +40,57 @@ public class MainActivity extends Activity {
     }
 
     private void test() {
-        GetPostsListRequest request = new GetPostsListRequest(0, 0, new Response.Listener<Void>() {
-            @Override
-            public void onResponse(Void response) {
-                Log.d("KVEST_TAG", "all is ok");
-            }
-        },
-        new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("KVEST_TAG", "error=" + error.getMessage());
-            }
-        });
-        request.setTag("test");
-        VolleyHelper.getInstance().addRequest(request);
+//        GetPostsListRequest request = new GetPostsListRequest(0, 0, new Response.Listener<Void>() {
+//            @Override
+//            public void onResponse(Void response) {
+//                Log.d("KVEST_TAG", "all is ok");
+//            }
+//        },
+//        new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                Log.d("KVEST_TAG", "error=" + error.getMessage());
+//            }
+//        });
+//        request.setTag("test");
+//        VolleyHelper.getInstance().addRequest(request);
+
+        ContentValues values = new ContentValues(6);
+        values.put(PostTable._ID, 27);
+        values.put(PostTable.AUTHOR_COLUMN,"author");
+        values.put(PostTable.DESCRIPTION_COLUMN,"description");
+        values.put(PostTable.DATE_COLUMN,"date");
+        values.put(PostTable.GIF_URL_COLUMN,"gif_url");
+        values.put(PostTable.PREVIEW_URL_COLUMN ,"preview_url");
+        Log.d("KVEST_TAG", "!!!!" + getContentResolver().insert(DevlifeProviderMetadata.LATEST_POSTS_ITEMS_URI, values));
+
+        Cursor cursor = getContentResolver().query(DevlifeProviderMetadata.LATEST_POSTS_ITEMS_URI, PostTable.FULL_PROJECTION, null,null,null);
+        Log.d("KVEST_TAG", "Whole data:");
+        Log.d("KVEST_TAG", "--------------------------------------------");
+        Log.d("KVEST_TAG", getCursorHeader(cursor));
+        Log.d("KVEST_TAG", "--------------------------------------------");
+        while(cursor.moveToNext()) {
+            Log.d("KVEST_TAG", getCursorData(cursor));
+        }
+        Log.d("KVEST_TAG", "--------------------------------------------");
+        cursor.close();
+    }
+
+    private static String getCursorHeader(Cursor cursor) {
+        String result = "";
+        for (int i = 0; i < cursor.getColumnCount(); ++i) {
+            result += cursor.getColumnName(i) + "\t";
+        }
+
+        return result;
+    }
+
+    private static String getCursorData(Cursor cursor) {
+        String result = "";
+        for (int i = 0; i < cursor.getColumnCount(); ++i) {
+            result += cursor.getString(i) + "\t";
+        }
+
+        return result;
     }
 }
