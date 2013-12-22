@@ -9,6 +9,7 @@ import com.android.volley.toolbox.JsonRequest;
 import com.google.gson.Gson;
 import com.kvest.developerslife.network.Urls;
 import com.kvest.developerslife.network.response.GetPostsListResponse;
+import com.kvest.developerslife.utility.Constants;
 
 import java.io.UnsupportedEncodingException;
 
@@ -20,13 +21,13 @@ import java.io.UnsupportedEncodingException;
  * To change this template use File | Settings | File Templates.
  */
 public class GetPostsListRequest extends JsonRequest<GetPostsListResponse> {
-    private static final int DEFAULT_PAGE_SIZE = 20;
+
 
     private static Gson gson = new Gson();
 
     public GetPostsListRequest(int category, int page, Response.Listener<GetPostsListResponse> listener,
                                Response.ErrorListener errorListener) {
-        super(Method.GET, Urls.getPostsUrl(category, page, DEFAULT_PAGE_SIZE), null, listener, errorListener);
+        super(Method.GET, Urls.getPostsUrl(category, page, Constants.DEFAULT_PAGE_SIZE), null, listener, errorListener);
     }
 
     @Override

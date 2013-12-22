@@ -17,7 +17,8 @@ import com.kvest.developerslife.network.request.GetPostsListRequest;
 import com.kvest.developerslife.network.response.GetPostsListResponse;
 import com.kvest.developerslife.ui.fragment.PostsListFragment;
 
-public class MainActivity extends DevlifeBaseActivity {
+public class MainActivity extends DevlifeBaseActivity implements PostsListFragment.LoadMorePostsListener {
+    private boolean isLoading;
     /**
      * Called when the activity is first created.
      */
@@ -43,6 +44,8 @@ public class MainActivity extends DevlifeBaseActivity {
                 test();
             }
         });
+
+        isLoading = false;
     }
 
     private void initVolley() {
@@ -79,18 +82,25 @@ public class MainActivity extends DevlifeBaseActivity {
 
     }
 
-    private void savePosts(GetPostsListResponse response) {
-        for (GetPostsListResponse.Post post : response.result)  {
-            ContentValues values = new ContentValues(6);
-            values.put(PostTable._ID, post.id);
-            values.put(PostTable.AUTHOR_COLUMN, post.author);
-            values.put(PostTable.DESCRIPTION_COLUMN, post.description);
-            values.put(PostTable.DATE_COLUMN, post.getDate());
-            values.put(PostTable.GIF_URL_COLUMN, post.gifURL);
-            values.put(PostTable.PREVIEW_URL_COLUMN, post.previewURL);
+    private void savePosts(final GetPostsListResponse response) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (GetPostsListResponse.Post post : response.result)  {
+                    ContentValues values = new ContentValues(6);
+                    values.put(PostTable._ID, post.id);
+                    values.put(PostTable.AUTHOR_COLUMN, post.author);
+                    values.put(PostTable.DESCRIPTION_COLUMN, post.description);
+                    values.put(PostTable.DATE_COLUMN, post.getDate());
+                    values.put(PostTable.GIF_URL_COLUMN, post.gifURL);
+                    values.put(PostTable.PREVIEW_URL_COLUMN, post.previewURL);
 
-            Log.d("KVEST_TAG", "!!!!" + getContentResolver().insert(DevlifeProviderMetadata.LATEST_POSTS_ITEMS_URI, values));
-        }
+                    getContentResolver().insert(DevlifeProviderMetadata.LATEST_POSTS_ITEMS_URI, values);
+                }
+
+                isLoading = false;
+            }
+        }).start();
     }
 
     private void printLatestPosts() {
@@ -122,5 +132,31 @@ public class MainActivity extends DevlifeBaseActivity {
         }
 
         return result;
+    }
+
+    @Override
+    public void loadMorePosts(int page) {
+        if (isLoading) {
+            return;
+        }
+        isLoading = true;
+
+        Log.d("KVEST_TAG", "page=" + page);
+        GetPostsListRequest request = new GetPostsListRequest(0, page, new Response.Listener<GetPostsListResponse>() {
+            @Override
+            public void onResponse(GetPostsListResponse response) {
+                Log.d("KVEST_TAG", "all is ok");
+                savePosts(response);
+            }
+        },
+        new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                isLoading = false;
+                Log.d("KVEST_TAG", "error=" + error.getMessage());
+            }
+        });
+        request.setTag("test");
+        VolleyHelper.getInstance().addRequest(request);
     }
 }

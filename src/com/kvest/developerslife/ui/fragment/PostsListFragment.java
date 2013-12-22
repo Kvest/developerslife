@@ -2,17 +2,20 @@ package com.kvest.developerslife.ui.fragment;
 
 import android.app.Activity;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import com.kvest.developerslife.R;
 import com.kvest.developerslife.contentprovider.DevlifeProviderMetadata;
 import com.kvest.developerslife.datastorage.table.PostTable;
 import com.kvest.developerslife.ui.adapter.PostsListAdapter;
+import com.kvest.developerslife.utility.Constants;
 
 /**
  * Created with IntelliJ IDEA.
@@ -22,16 +25,35 @@ import com.kvest.developerslife.ui.adapter.PostsListAdapter;
  * To change this template use File | Settings | File Templates.
  */
 public class PostsListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+    private static final int MIN_ITEMS_FOR_MORE_LOAD = 2;
     private static final String[] PROJECTION = {PostTable._ID, PostTable.AUTHOR_COLUMN, PostTable.DESCRIPTION_COLUMN,
                                                 PostTable.DATE_COLUMN, PostTable.PREVIEW_URL_COLUMN};
     private static final int LOAD_POSTS_ID = 0;
 
     private PostsListAdapter adapter;
     private OnPostClickListener onPostClickListener;
+    private LoadMorePostsListener loadMorePostsListener;
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        getListView().setCacheColorHint(Color.TRANSPARENT);
+
+        getListView().setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {}
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if ((totalItemCount - firstVisibleItem - visibleItemCount) < MIN_ITEMS_FOR_MORE_LOAD) {
+                    if (loadMorePostsListener != null) {
+                        loadMorePostsListener.loadMorePosts(totalItemCount <= 0 ? 0 : totalItemCount / Constants.DEFAULT_PAGE_SIZE);
+                    }
+
+                }
+            }
+        });
 
         //create and set adapter
         String[] from = {PostTable.AUTHOR_COLUMN, PostTable.DATE_COLUMN, PostTable._ID, PostTable.DESCRIPTION_COLUMN,
@@ -57,7 +79,10 @@ public class PostsListFragment extends ListFragment implements LoaderManager.Loa
         super.onAttach(activity);
 
         try {
-            onPostClickListener = (OnPostClickListener) activity;
+            onPostClickListener = (OnPostClickListener)activity;
+        } catch (ClassCastException cce) {}
+        try {
+            loadMorePostsListener = (LoadMorePostsListener)activity;
         } catch (ClassCastException cce) {}
     }
 
@@ -83,5 +108,9 @@ public class PostsListFragment extends ListFragment implements LoaderManager.Loa
 
     public interface OnPostClickListener {
         public void onPostClick(long postId);
+    }
+
+    public interface LoadMorePostsListener {
+        public void loadMorePosts(int page);
     }
 }
