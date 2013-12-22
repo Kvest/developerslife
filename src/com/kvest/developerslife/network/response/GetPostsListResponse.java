@@ -1,6 +1,10 @@
 package com.kvest.developerslife.network.response;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created with IntelliJ IDEA.
@@ -10,6 +14,9 @@ import java.util.ArrayList;
  * To change this template use File | Settings | File Templates.
  */
 public class GetPostsListResponse {
+    public static final String TWITTER_DATE_TIME_FORMAT = "MMM dd, yyyy KK:mm:ss aa";
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat(TWITTER_DATE_TIME_FORMAT, Locale.ENGLISH);
+
     public ArrayList<Post> result;
 
     public static class Post {
@@ -20,5 +27,18 @@ public class GetPostsListResponse {
         public String date;
         public String gifURL;
         public String previewURL;
+
+        public long getDate() {
+            Date d = null;
+            try {
+                d = dateFormat.parse(date);
+            } catch (ParseException pe) {};
+
+            if (d != null) {
+                return d.getTime();
+            } else {
+                return 0;
+            }
+        }
     }
 }

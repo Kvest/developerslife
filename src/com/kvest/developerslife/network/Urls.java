@@ -14,8 +14,8 @@ public abstract class Urls {
 
     public static final String PAGE_SIZE_PARAM = "pageSize";
 
-    public static String getPostsUrl(int section, int page, int pageSize) {
-        return DEVLIFE_URL + "/" + CategoryHelper.id2Name(section) + "/" + page + "?json=true&" +
+    public static String getPostsUrl(int category, int page, int pageSize) {
+        return DEVLIFE_URL + "/" + CategoryHelper.id2Name(category) + "/" + page + "?json=true&" +
                PAGE_SIZE_PARAM + "=" + pageSize;
     }
 }

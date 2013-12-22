@@ -19,33 +19,24 @@ import java.io.UnsupportedEncodingException;
  * Time: 23:23
  * To change this template use File | Settings | File Templates.
  */
-public class GetPostsListRequest extends JsonRequest<Void> {
+public class GetPostsListRequest extends JsonRequest<GetPostsListResponse> {
     private static final int DEFAULT_PAGE_SIZE = 20;
 
     private static Gson gson = new Gson();
 
-    public GetPostsListRequest(int section, int page, Response.Listener<Void> listener,
+    public GetPostsListRequest(int category, int page, Response.Listener<GetPostsListResponse> listener,
                                Response.ErrorListener errorListener) {
-        super(Method.GET, Urls.getPostsUrl(section, page, DEFAULT_PAGE_SIZE), null, listener, errorListener);
+        super(Method.GET, Urls.getPostsUrl(category, page, DEFAULT_PAGE_SIZE), null, listener, errorListener);
     }
 
     @Override
-    protected Response<Void> parseNetworkResponse(NetworkResponse response) {
+    protected Response<GetPostsListResponse> parseNetworkResponse(NetworkResponse response) {
         try {
             //get string response
             String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
-
-            //Parse string response with Gson
-            GetPostsListResponse result = gson.fromJson(json, GetPostsListResponse.class);
-            savePosts(result);
-
-            return Response.success(null, HttpHeaderParser.parseCacheHeaders(response));
+            return Response.success(gson.fromJson(json, GetPostsListResponse.class), HttpHeaderParser.parseCacheHeaders(response));
         } catch (UnsupportedEncodingException e) {
             return Response.error(new ParseError(e));
         }
-    }
-
-    private void savePosts(GetPostsListResponse response) {
-        //TODO
     }
 }

@@ -60,7 +60,7 @@ public class DevlifeProvider extends ContentProvider {
             case TOP_POSTS_URI_INDICATOR :
                 queryBuilder.setTables("\"" + PostTable.TABLE_NAME  + "\" INNER JOIN \"" + CategoriesTable.TABLE_NAME +
                                        "\" ON \"" + PostTable.TABLE_NAME + "\".\"" + PostTable._ID + "\"=\"" +
-                                       PostTable.TABLE_NAME + "\".\"" + PostTable._ID + "\"");
+                                        CategoriesTable.TABLE_NAME + "\".\"" + CategoriesTable.POST_ID_COLUMN + "\"");
                 String[] oldProjection = projection;
                 projection = new String[oldProjection.length];
                 for (int i = 0; i < projection.length; ++i) {
