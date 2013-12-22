@@ -2,6 +2,7 @@ package com.kvest.developerslife.ui.activity;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -30,18 +31,19 @@ public class MainActivity extends DevlifeBaseActivity implements PostsListFragme
         if (savedInstanceState == null) {
             initVolley();
 
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            try {
-               transaction.add(R.id.fragment_container, new PostsListFragment());
-            } finally {
-                transaction.commit();
-            }
+//            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//            try {
+//               transaction.add(R.id.fragment_container, new PostsListFragment());
+//            } finally {
+//                transaction.commit();
+//            }
         }
 
         findViewById(R.id.test).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                test();
+                //test();
+                startActivity(new Intent(MainActivity.this, PostsListActivity.class));
             }
         });
 
