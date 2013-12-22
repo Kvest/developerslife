@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
 import com.android.volley.Response;
@@ -14,8 +15,9 @@ import com.kvest.developerslife.datastorage.table.PostTable;
 import com.kvest.developerslife.network.VolleyHelper;
 import com.kvest.developerslife.network.request.GetPostsListRequest;
 import com.kvest.developerslife.network.response.GetPostsListResponse;
+import com.kvest.developerslife.ui.fragment.PostsListFragment;
 
-public class MainActivity extends Activity {
+public class MainActivity extends DevlifeBaseActivity {
     /**
      * Called when the activity is first created.
      */
@@ -26,6 +28,13 @@ public class MainActivity extends Activity {
 
         if (savedInstanceState == null) {
             initVolley();
+
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            try {
+               transaction.add(R.id.fragment_container, new PostsListFragment());
+            } finally {
+                transaction.commit();
+            }
         }
 
         findViewById(R.id.test).setOnClickListener(new View.OnClickListener() {

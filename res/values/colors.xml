@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="comment_textcolor">#808080</color>
+    <color name="var_textcolor">#6262af</color>
+    <color name="field_name_textcolor">#800080</color>
+    <color name="field_value_textcolor">#008000</color>
+</resources>
