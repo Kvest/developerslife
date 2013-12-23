@@ -1,5 +1,9 @@
 package com.kvest.developerslife.utility;
 
+import android.os.Environment;
+
+import java.io.File;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Kvest
@@ -10,4 +14,6 @@ package com.kvest.developerslife.utility;
 public abstract class Constants {
     public static final String VOLLEY_COMMON_TAG = "volley_tag";
     public static final int DEFAULT_PAGE_SIZE = 20;
+    public static final String CACHE_DIRECTORY = Environment.getExternalStorageDirectory() + File.separator + "devlife";
+    public static final String GIFS_CACHE_DIRECTORY = CACHE_DIRECTORY + File.separator + "gifs" + File.separator;
 }

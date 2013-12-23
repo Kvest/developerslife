@@ -2,13 +2,13 @@ package com.kvest.developerslife.ui.fragment;
 
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +16,11 @@ import android.widget.TextView;
 import com.kvest.developerslife.R;
 import com.kvest.developerslife.contentprovider.DevlifeProviderMetadata;
 import com.kvest.developerslife.datastorage.table.PostTable;
+import com.kvest.developerslife.network.NetworkRequestHelper;
+import com.kvest.developerslife.utility.Constants;
+import com.kvest.developerslife.utility.FileUtility;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -33,6 +37,8 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
 
     private static final String POST_ID_ARGUMENT = "com.kvest.developerslife.ui.fragment.PostDetailsFragment.POST_ID";
     private static final int LOAD_POST_ID = 0;
+
+    private GifLoader gifLoader;
 
     public static PostDetailsFragment createPostDetailsFragment(long postId) {
         Bundle arguments = new Bundle();
@@ -55,6 +61,17 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
         super.onViewCreated(view, savedInstanceState);
 
         getActivity().getSupportLoaderManager().initLoader(LOAD_POST_ID, null, this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        //cancel gif request
+        if (gifLoader != null) {
+            gifLoader.cancel(true);
+            gifLoader = null;
+        }
     }
 
     @Override
@@ -93,7 +110,48 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
         String description = getString(R.string.description, cursor.getString(cursor.getColumnIndex(PostTable.DESCRIPTION_COLUMN)));
         ((TextView)root.findViewById(R.id.post_description)).setText(Html.fromHtml(description));
 
-        Log.d("KVEST_TAG", "Thread name=" + Thread.currentThread().getName());
-        Log.d("KVEST_TAG", "gif=" + cursor.getString(cursor.getColumnIndex(PostTable.GIF_URL_COLUMN)));
+        //load gif
+        gifLoader = new GifLoader();
+        gifLoader.execute(cursor.getString(cursor.getColumnIndex(PostTable.GIF_URL_COLUMN)));
+    }
+
+    private class GifLoader extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            //get file name
+            String url = params[0];
+            String[] urlParts = url.split("/");
+            String fullFileName = Constants.GIFS_CACHE_DIRECTORY + urlParts[urlParts.length - 1];
+
+            //if file already loaded - return path
+            if (FileUtility.fileExists(fullFileName)) {
+                return fullFileName;
+            }
+
+            //create cache dir
+            FileUtility.createDirIfNotExists(Constants.GIFS_CACHE_DIRECTORY);
+
+            //load gif file
+            if (NetworkRequestHelper.loadFile(url, new File(fullFileName))) {
+                return fullFileName;
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+
+            if (result != null) {
+                //TODO
+                //test if file still not exists
+            } else {
+                //TODO
+                //show error
+            }
+
+            gifLoader = null;
+        }
     }
 }
