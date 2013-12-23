@@ -1,10 +1,10 @@
 package com.kvest.developerslife.ui.activity;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -25,7 +25,8 @@ import com.kvest.developerslife.utility.Constants;
  * Time: 20:45
  * To change this template use File | Settings | File Templates.
  */
-public class PostsListActivity extends DevlifeBaseActivity implements PostsListFragment.LoadMorePostsListener {
+public class PostsListActivity extends DevlifeBaseActivity implements PostsListFragment.LoadMorePostsListener,
+                                                                      PostsListFragment.OnPostClickListener{
     private Handler handler = new Handler();
     private PostsListFragment postsListFragment;
     private boolean isDataLoading;
@@ -35,6 +36,7 @@ public class PostsListActivity extends DevlifeBaseActivity implements PostsListF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_container);
 
+        setDataLoading(false);
         if (savedInstanceState == null) {
             postsListFragment = new PostsListFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -105,5 +107,12 @@ public class PostsListActivity extends DevlifeBaseActivity implements PostsListF
     private void setDataLoading(boolean value) {
         isDataLoading = value;
         setSupportProgressBarIndeterminateVisibility(isDataLoading);
+    }
+
+    @Override
+    public void onPostClick(long postId) {
+        Intent intent = new Intent(this, PostDetailsActivity.class);
+        intent.putExtra(PostDetailsActivity.POST_ID_EXTRA, postId);
+        startActivity(intent);
     }
 }

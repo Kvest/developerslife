@@ -23,6 +23,9 @@
         <activity
             android:name=".ui.activity.PostsListActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.PostDetailsActivity"
+            android:screenOrientation="portrait" />
 
         <provider
             android:name=".contentprovider.DevlifeProvider"
