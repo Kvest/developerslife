@@ -46,11 +46,10 @@ public class PostsListFragment extends ListFragment implements LoaderManager.Loa
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                if ((totalItemCount - firstVisibleItem - visibleItemCount) < MIN_ITEMS_FOR_MORE_LOAD) {
+                if (totalItemCount > 0 && (totalItemCount - firstVisibleItem - visibleItemCount) < MIN_ITEMS_FOR_MORE_LOAD) {
                     if (loadMorePostsListener != null) {
-                        loadMorePostsListener.loadMorePosts(totalItemCount <= 0 ? 0 : totalItemCount / Constants.DEFAULT_PAGE_SIZE);
+                        loadMorePostsListener.loadMorePosts(totalItemCount / Constants.DEFAULT_PAGE_SIZE);
                     }
-
                 }
             }
         });
@@ -98,6 +97,11 @@ public class PostsListFragment extends ListFragment implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        //if list is empty - try to load data
+        if (cursor.getCount() == 0 && loadMorePostsListener != null) {
+            loadMorePostsListener.loadMorePosts(0);
+        }
+
         adapter.swapCursor(cursor);
     }
 

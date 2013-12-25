@@ -13,10 +13,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.kvest.developerslife.R;
 import com.kvest.developerslife.contentprovider.DevlifeProviderMetadata;
 import com.kvest.developerslife.datastorage.table.PostTable;
 import com.kvest.developerslife.network.NetworkRequestHelper;
+import com.kvest.developerslife.ui.widget.GifView;
 import com.kvest.developerslife.utility.Constants;
 import com.kvest.developerslife.utility.FileUtility;
 
@@ -115,6 +117,11 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
         gifLoader.execute(cursor.getString(cursor.getColumnIndex(PostTable.GIF_URL_COLUMN)));
     }
 
+    private void setGifFile(String filePath) {
+        ((GifView)getView().findViewById(R.id.gif_image)).setGif(filePath);
+        ((GifView)getView().findViewById(R.id.gif_image)).play();
+    }
+
     private class GifLoader extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
@@ -144,11 +151,11 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
             super.onPostExecute(result);
 
             if (result != null) {
-                //TODO
                 //test if file still not exists
+                setGifFile(result);
             } else {
-                //TODO
                 //show error
+                Toast.makeText(getActivity(), R.string.error_loading_gif, Toast.LENGTH_LONG).show();
             }
 
             gifLoader = null;
