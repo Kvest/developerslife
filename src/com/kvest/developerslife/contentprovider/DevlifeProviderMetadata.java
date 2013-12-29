@@ -9,10 +9,7 @@ import android.net.Uri;
  * Time: 0:21
  * To change this template use File | Settings | File Templates.
  */
-public class DevlifeProviderMetadata {
-    //Don't allow to create this class
-    private DevlifeProviderMetadata(){}
-
+public abstract class DevlifeProviderMetadata {
     public static final String AUTHORITY = "com.kvest.developerslife.contentprovider.DevlifeProvider";
 
     public static final String CONTENT_TYPE_POST_COLLECTION = "vnd.android.cursor.dir/vnd.primerworldapps.proposal";

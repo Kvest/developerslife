@@ -38,15 +38,16 @@ public class GifView extends View {
 
     private boolean playFlag = false;
 
+    public GifView(Context context) {
+        super(context);
+    }
+
     public GifView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    /**
-     * Constructor
-     */
-    public GifView(Context context) {
-        super(context);
+    public GifView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
     }
 
     private InputStream getInputStream() {
@@ -85,7 +86,7 @@ public class GifView extends View {
         bitmap = cacheImage;
 
         getLayoutParams().width = bitmap.getWidth();
-        getLayoutParams().width = bitmap.getHeight();
+        getLayoutParams().height = bitmap.getHeight();
         requestLayout();
     }
 
@@ -114,7 +115,7 @@ public class GifView extends View {
         bitmap = cacheImage;
 
         getLayoutParams().width = bitmap.getWidth();
-        getLayoutParams().width = bitmap.getHeight();
+        getLayoutParams().height = bitmap.getHeight();
         requestLayout();
     }
 

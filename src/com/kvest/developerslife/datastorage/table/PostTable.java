@@ -9,7 +9,7 @@ import android.provider.BaseColumns;
  * Time: 13:58
  * To change this template use File | Settings | File Templates.
  */
-public class PostTable implements BaseColumns {
+public abstract class PostTable implements BaseColumns {
     public static final String TABLE_NAME = "post";
 
     public static final String AUTHOR_COLUMN = "author";

@@ -15,6 +15,7 @@ import com.kvest.developerslife.R;
 import com.kvest.developerslife.contentprovider.DevlifeProviderMetadata;
 import com.kvest.developerslife.datastorage.table.PostTable;
 import com.kvest.developerslife.ui.adapter.PostsListAdapter;
+import com.kvest.developerslife.utility.CategoryHelper;
 import com.kvest.developerslife.utility.Constants;
 
 /**
@@ -33,6 +34,7 @@ public class PostsListFragment extends ListFragment implements LoaderManager.Loa
     private PostsListAdapter adapter;
     private OnPostClickListener onPostClickListener;
     private LoadMorePostsListener loadMorePostsListener;
+    private int category = CategoryHelper.LATEST_CATEGORY_ID;
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -71,6 +73,10 @@ public class PostsListFragment extends ListFragment implements LoaderManager.Loa
 
         //load cursor
         getActivity().getSupportLoaderManager().initLoader(LOAD_POSTS_ID, null, this);
+    }
+
+    public int getCategory() {
+        return category;
     }
 
     @Override

@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 import com.kvest.developerslife.datastorage.DevlifeSQLStorage;
 import com.kvest.developerslife.datastorage.table.CategoriesTable;
 import com.kvest.developerslife.datastorage.table.PostTable;
@@ -124,7 +125,40 @@ public class DevlifeProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        throw new IllegalArgumentException("Unknown uri = " + uri);
+        int rowsDeleted = 0;
+
+        switch (uriMatcher.match(uri)) {
+            case LATEST_POSTS_URI_INDICATOR :
+                rowsDeleted = deletePostsByCategory(CategoryHelper.LATEST_CATEGORY_ID, selection, selectionArgs);
+                break;
+            case HOT_POSTS_URI_INDICATOR :
+                rowsDeleted = deletePostsByCategory(CategoryHelper.HOT_CATEGORY_ID, selection, selectionArgs);
+                break;
+            case TOP_POSTS_URI_INDICATOR :
+                rowsDeleted = deletePostsByCategory(CategoryHelper.TOP_CATEGORY_ID, selection, selectionArgs);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown uri = " + uri);
+        }
+
+        if (rowsDeleted > 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return rowsDeleted;
+    }
+
+    private int deletePostsByCategory(int category, String selection, String[] selectionArgs) {
+        boolean hasSelection = !TextUtils.isEmpty(selection);
+        SQLiteDatabase db = sqlStorage.getWritableDatabase();
+        int rowsDeleted = db.delete(CategoriesTable.TABLE_NAME, CategoriesTable.CATEGORY_COLUMN + "=" + category +
+                                    (hasSelection ? (" AND " + selection) : ""), (hasSelection ? selectionArgs : null));
+        //clean posts
+        if (rowsDeleted > 0) {
+            db.delete(PostTable.TABLE_NAME, PostTable._ID + " NOT IN (?)",
+                      new String[]{"SELECT DISTINCT \"" + CategoriesTable.POST_ID_COLUMN + "\" FROM " + CategoriesTable.TABLE_NAME});
+        }
+
+        return rowsDeleted;
     }
 
     @Override

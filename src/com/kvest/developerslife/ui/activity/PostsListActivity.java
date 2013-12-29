@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.MenuItemCompat;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -26,7 +29,8 @@ import com.kvest.developerslife.utility.Constants;
  * To change this template use File | Settings | File Templates.
  */
 public class PostsListActivity extends DevlifeBaseActivity implements PostsListFragment.LoadMorePostsListener,
-                                                                      PostsListFragment.OnPostClickListener{
+                                                                      PostsListFragment.OnPostClickListener {
+    private static final int REFRESH_MENU_ID = 0;
     private Handler handler = new Handler();
     private PostsListFragment postsListFragment;
     private boolean isDataLoading;
@@ -51,20 +55,52 @@ public class PostsListActivity extends DevlifeBaseActivity implements PostsListF
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        MenuItemCompat.setShowAsAction(menu.add(0, REFRESH_MENU_ID, 0, getString(R.string.refresh))
+                                            .setIcon(android.R.drawable.ic_popup_sync), MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case REFRESH_MENU_ID : refreshPostsList(); return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void loadMorePosts(int page) {
         if (isDataLoading) {
             return;
         }
         setDataLoading(true);
 
-        loadPosts(CategoryHelper.LATEST_CATEGORY_ID, page);
+        loadPosts(postsListFragment.getCategory(), page);
     }
 
-    private void loadPosts(int category, int page) {
-        GetPostsListRequest request = new GetPostsListRequest(0, page, new Response.Listener<GetPostsListResponse>() {
+    private void refreshPostsList() {
+        //clean cache by category (and the loading will start automatically)
+        switch (postsListFragment.getCategory()) {
+            case CategoryHelper.LATEST_CATEGORY_ID :
+                getContentResolver().delete(DevlifeProviderMetadata.LATEST_POSTS_ITEMS_URI, null, null);
+                break;
+            case CategoryHelper.HOT_CATEGORY_ID :
+                getContentResolver().delete(DevlifeProviderMetadata.HOT_POSTS_ITEMS_URI, null, null);
+                break;
+            case CategoryHelper.TOP_CATEGORY_ID :
+                getContentResolver().delete(DevlifeProviderMetadata.TOP_POSTS_ITEMS_URI, null, null);
+                break;
+        }
+    }
+
+    private void loadPosts(final int category, int page) {
+        GetPostsListRequest request = new GetPostsListRequest(category, page, new Response.Listener<GetPostsListResponse>() {
             @Override
             public void onResponse(GetPostsListResponse response) {
-                savePosts(response);
+                savePosts(response, category);
             }
         },
         new Response.ErrorListener() {
@@ -78,7 +114,7 @@ public class PostsListActivity extends DevlifeBaseActivity implements PostsListF
         VolleyHelper.getInstance().addRequest(request);
     }
 
-    private void savePosts(final GetPostsListResponse response) {
+    private void savePosts(final GetPostsListResponse response, final int category) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -91,7 +127,17 @@ public class PostsListActivity extends DevlifeBaseActivity implements PostsListF
                     values.put(PostTable.GIF_URL_COLUMN, post.gifURL);
                     values.put(PostTable.PREVIEW_URL_COLUMN, post.previewURL);
 
-                    getContentResolver().insert(DevlifeProviderMetadata.LATEST_POSTS_ITEMS_URI, values);
+                    switch (category) {
+                        case CategoryHelper.LATEST_CATEGORY_ID :
+                            getContentResolver().insert(DevlifeProviderMetadata.LATEST_POSTS_ITEMS_URI, values);
+                            break;
+                        case CategoryHelper.HOT_CATEGORY_ID :
+                            getContentResolver().insert(DevlifeProviderMetadata.HOT_POSTS_ITEMS_URI, values);
+                            break;
+                        case CategoryHelper.TOP_CATEGORY_ID :
+                            getContentResolver().insert(DevlifeProviderMetadata.TOP_POSTS_ITEMS_URI, values);
+                            break;
+                    }
                 }
 
                 handler.post(new Runnable() {

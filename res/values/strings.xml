@@ -5,4 +5,5 @@
     <string name="description"><![CDATA[<font color="#800080">desc</font> :  <font color="#008000">%1$s</font> ,]]></string>
     <string name="error_loading_posts">Error occurred while loading posts</string>
     <string name="error_loading_gif">Error occurred while loading gif picture</string>
+    <string name="refresh">Refresh</string>
 </resources>
