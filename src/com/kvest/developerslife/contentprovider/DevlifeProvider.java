@@ -68,6 +68,7 @@ public class DevlifeProvider extends ContentProvider {
                     projection[i] = "\"" + PostTable.TABLE_NAME  + "\"." + oldProjection[i];
                 }
                 queryBuilder.appendWhere(CategoriesTable.CATEGORY_COLUMN + "=" + selectCategoryId(indicator));
+                sortOrder = "\"" + CategoriesTable.TABLE_NAME  + "\"." + CategoriesTable._ID + " ASC";
                 break;
             default:
                 throw new IllegalArgumentException("Unknown uri = " + uri);
