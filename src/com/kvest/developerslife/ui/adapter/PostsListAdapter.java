@@ -2,12 +2,9 @@ package com.kvest.developerslife.ui.adapter;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.text.Html;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 import com.android.volley.toolbox.NetworkImageView;
 import com.kvest.developerslife.R;
@@ -47,7 +44,7 @@ public class PostsListAdapter extends SimpleCursorAdapter implements SimpleCurso
             return true;
         }
         if (view.getId() == R.id.post_description) {
-            ((TextView) view).setText(Html.fromHtml(getString(R.string.description, cursor.getString(columnIndex))));
+            ((TextView) view).setText(Html.fromHtml(getString(R.string.description_html, cursor.getString(columnIndex))));
             return true;
         }
         if (view.getId() == R.id.preview_image) {

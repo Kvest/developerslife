@@ -3,7 +3,7 @@
     <dimen name="post_item_padding">10dip</dimen>
     <dimen name="post_item_entry_margin">12dip</dimen>
     <dimen name="post_item_preview_margin">8dip</dimen>
-    <dimen name="post_item_preview_margin_left">20dip</dimen>
+    <dimen name="post_item_preview_margin_left">24dip</dimen>
     <dimen name="post_item_textsize">14sp</dimen>
     <dimen name="post_item_textsize_big">18sp</dimen>
 </resources>

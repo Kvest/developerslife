@@ -111,9 +111,23 @@
         android:layout_marginBottom="@dimen/post_item_preview_margin"
         android:layout_marginLeft="@dimen/post_item_preview_margin_left" />
     <TextView
+        android:id="@+id/post_rating"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/gif_image"
+        android:textSize="@dimen/post_item_textsize_big"
+        android:layout_marginLeft="@dimen/post_item_entry_margin" />
+    <TextView
+        android:id="@+id/post_comments"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/post_rating"
+        android:textSize="@dimen/post_item_textsize_big"
+        android:layout_marginLeft="@dimen/post_item_entry_margin" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/post_comments"
         android:layout_alignParentLeft="true"
         android:textColor="@color/comment_textcolor"
         android:textSize="@dimen/post_item_textsize_big"

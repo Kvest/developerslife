@@ -113,8 +113,12 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
         Date date = new Date(cursor.getLong(cursor.getColumnIndex(PostTable.DATE_COLUMN)));
         ((TextView)root.findViewById(R.id.date)).setText(DATE_FORMAT.format(date));
         ((TextView)root.findViewById(R.id.entry_number)).setText(getString(R.string.entry_number, cursor.getLong(cursor.getColumnIndex(PostTable._ID))));
-        String description = getString(R.string.description, cursor.getString(cursor.getColumnIndex(PostTable.DESCRIPTION_COLUMN)));
-        ((TextView)root.findViewById(R.id.post_description)).setText(Html.fromHtml(description));
+        String tmp = getString(R.string.description_html, cursor.getString(cursor.getColumnIndex(PostTable.DESCRIPTION_COLUMN)));
+        ((TextView)root.findViewById(R.id.post_description)).setText(Html.fromHtml(tmp));
+        tmp = getString(R.string.rating_html, cursor.getInt(cursor.getColumnIndex(PostTable.VOTES_COLUMN)));
+        ((TextView)root.findViewById(R.id.post_rating)).setText(Html.fromHtml(tmp));
+        tmp = getString(R.string.comments_html, 0);
+        ((TextView)root.findViewById(R.id.post_comments)).setText(Html.fromHtml(tmp));
 
         //load gif
         gifLoader = new GifLoader();

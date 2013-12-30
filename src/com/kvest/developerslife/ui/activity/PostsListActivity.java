@@ -124,6 +124,7 @@ public class PostsListActivity extends DevlifeBaseActivity implements PostsListF
                     values.put(PostTable.AUTHOR_COLUMN, post.author);
                     values.put(PostTable.DESCRIPTION_COLUMN, post.description);
                     values.put(PostTable.DATE_COLUMN, post.getDate());
+                    values.put(PostTable.VOTES_COLUMN, post.votes);
                     values.put(PostTable.GIF_URL_COLUMN, post.gifURL);
                     values.put(PostTable.PREVIEW_URL_COLUMN, post.previewURL);
 
