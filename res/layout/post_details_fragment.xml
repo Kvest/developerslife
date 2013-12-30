@@ -101,9 +101,9 @@
         android:textColor="@android:color/black"
         android:textSize="@dimen/post_item_textsize_big"
         android:text=": " />
-    <com.kvest.developerslife.ui.widget.GifView
+    <com.kvest.developerslife.ui.widget.ResizableGifImageView
         android:id="@+id/gif_image"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/preview_label"
         android:layout_alignParentLeft="true"
