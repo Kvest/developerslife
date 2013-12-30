@@ -9,6 +9,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +22,11 @@ import com.kvest.developerslife.network.NetworkRequestHelper;
 import com.kvest.developerslife.ui.widget.GifView;
 import com.kvest.developerslife.utility.Constants;
 import com.kvest.developerslife.utility.FileUtility;
+import pl.droidsonroids.gif.GifDrawable;
+import pl.droidsonroids.gif.GifImageView;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -118,8 +122,12 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
     }
 
     private void setGifFile(String filePath) {
-        ((GifView)getView().findViewById(R.id.gif_image)).setGif(filePath);
-        ((GifView)getView().findViewById(R.id.gif_image)).play();
+        try {
+            GifDrawable gifFromPath = new GifDrawable(filePath);
+            ((GifImageView)getView().findViewById(R.id.gif_image)).setImageDrawable(gifFromPath);
+        } catch (IOException ioException) {
+            Toast.makeText(getActivity(), R.string.error_loading_gif, Toast.LENGTH_LONG).show();
+        }
     }
 
     private class GifLoader extends AsyncTask<String, Void, String> {
@@ -151,7 +159,6 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
             super.onPostExecute(result);
 
             if (result != null) {
-                //test if file still not exists
                 setGifFile(result);
             } else {
                 //show error
