@@ -152,7 +152,11 @@ public class PostsListActivity extends DevlifeBaseActivity implements PostsListF
 
     private void setDataLoading(boolean value) {
         isDataLoading = value;
-        setSupportProgressBarIndeterminateVisibility(isDataLoading);
+        if (isDataLoading) {
+            showProgress();
+        } else {
+            hideProgress();
+        }
     }
 
     @Override

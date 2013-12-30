@@ -22,4 +22,12 @@ public class DevlifeBaseActivity extends ActionBarActivity {
         BugSenseHandler.initAndStartSession(this, BUGSENS_APIKEY);
         supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
     }
+
+    public void showProgress() {
+        setSupportProgressBarIndeterminateVisibility(true);
+    }
+
+    public void hideProgress() {
+        setSupportProgressBarIndeterminateVisibility(false);
+    }
 }

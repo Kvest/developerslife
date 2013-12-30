@@ -1,5 +1,6 @@
 package com.kvest.developerslife.ui.fragment;
 
+import android.app.Activity;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -18,6 +19,7 @@ import com.kvest.developerslife.R;
 import com.kvest.developerslife.contentprovider.DevlifeProviderMetadata;
 import com.kvest.developerslife.datastorage.table.PostTable;
 import com.kvest.developerslife.network.NetworkRequestHelper;
+import com.kvest.developerslife.ui.activity.DevlifeBaseActivity;
 import com.kvest.developerslife.utility.Constants;
 import com.kvest.developerslife.utility.FileUtility;
 import pl.droidsonroids.gif.GifDrawable;
@@ -130,6 +132,17 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
 
     private class GifLoader extends AsyncTask<String, Void, String> {
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            //show progress
+            Activity activity = getActivity();
+            if (activity != null) {
+                ((DevlifeBaseActivity)activity).showProgress();
+            }
+        }
+
+        @Override
         protected String doInBackground(String... params) {
             //get file name
             String url = params[0];
@@ -161,6 +174,12 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
             } else {
                 //show error
                 Toast.makeText(getActivity(), R.string.error_loading_gif, Toast.LENGTH_LONG).show();
+            }
+
+            //hide progress
+            Activity activity = getActivity();
+            if (activity != null) {
+                ((DevlifeBaseActivity)activity).hideProgress();
             }
 
             gifLoader = null;
