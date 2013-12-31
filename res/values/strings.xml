@@ -7,5 +7,6 @@
     <string name="comments_html"><![CDATA[<font color="#800080">comments</font> : <b><font color="#008000">%1$d</font></b> ,]]></string>
     <string name="error_loading_posts">Error occurred while loading posts</string>
     <string name="error_loading_gif">Error occurred while loading gif picture</string>
+    <string name="error_updating_comments">Error occurred while updating comments</string>
     <string name="refresh">Refresh</string>
 </resources>

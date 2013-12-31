@@ -1,6 +1,8 @@
 package com.kvest.developerslife.ui.fragment;
 
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -15,10 +17,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.kvest.developerslife.R;
 import com.kvest.developerslife.contentprovider.DevlifeProviderMetadata;
+import com.kvest.developerslife.datastorage.table.CommentsTable;
 import com.kvest.developerslife.datastorage.table.PostTable;
 import com.kvest.developerslife.network.NetworkRequestHelper;
+import com.kvest.developerslife.network.VolleyHelper;
+import com.kvest.developerslife.network.request.GetCommentsRequest;
+import com.kvest.developerslife.network.response.GetCommentsResponse;
 import com.kvest.developerslife.ui.activity.DevlifeBaseActivity;
 import com.kvest.developerslife.utility.Constants;
 import com.kvest.developerslife.utility.FileUtility;
@@ -43,6 +51,7 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
 
     private static final String POST_ID_ARGUMENT = "com.kvest.developerslife.ui.fragment.PostDetailsFragment.POST_ID";
     private static final int LOAD_POST_ID = 0;
+    private static final int LOAD_COMMENTS_ID = 1;
 
     private GifLoader gifLoader;
 
@@ -80,13 +89,16 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
         }
     }
 
+    private long getPostId() {
+        Bundle arguments = getArguments();
+        return (arguments != null && arguments.containsKey(POST_ID_ARGUMENT)) ? arguments.getLong(POST_ID_ARGUMENT) : -1;
+    }
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
         switch (id) {
             case LOAD_POST_ID :
-                Bundle arguments = getArguments();
-                long postId = (arguments != null && arguments.containsKey(POST_ID_ARGUMENT)) ? arguments.getLong(POST_ID_ARGUMENT) : -1;
-                Uri uri = Uri.withAppendedPath(DevlifeProviderMetadata.POST_ITEMS_URI, Long.toString(postId));
+                Uri uri = Uri.withAppendedPath(DevlifeProviderMetadata.POST_ITEMS_URI, Long.toString(getPostId()));
                 return new CursorLoader(getActivity(), uri, PostTable.FULL_PROJECTION, null, null, null);
         }
 
@@ -132,6 +144,83 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
         } catch (IOException ioException) {
             Toast.makeText(getActivity(), R.string.error_loading_gif, Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void setCommentsCount(int commentsCount) {
+        String tmp = getString(R.string.comments_html, commentsCount);
+        ((TextView)getView().findViewById(R.id.post_comments)).setText(Html.fromHtml(tmp));
+    }
+
+    private void updateComments() {
+        GetCommentsRequest request = new GetCommentsRequest(getPostId(), new Response.Listener<GetCommentsResponse>() {
+            @Override
+            public void onResponse(GetCommentsResponse response) {
+                //save comments
+                saveComments(response);
+
+                //try to update data about post
+                //TODO
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //show comments
+                loadCommentsFromCache();
+
+                //hide progress
+                Activity activity = getActivity();
+                if (activity != null) {
+                    ((DevlifeBaseActivity)activity).hideProgress();
+                }
+
+                //show message
+                Toast.makeText(getActivity(), R.string.error_updating_comments, Toast.LENGTH_LONG).show();
+            }
+        });
+        request.setTag(Constants.VOLLEY_COMMON_TAG);
+        VolleyHelper.getInstance().addRequest(request);
+    }
+
+    private void loadCommentsFromCache() {
+        DevlifeBaseActivity activity = (DevlifeBaseActivity)getActivity();
+        if (activity != null) {
+            activity.getSupportLoaderManager().initLoader(LOAD_COMMENTS_ID, null, this);
+        }
+    }
+
+    private void showComments() {
+        //TODO
+        //setCommentsCount(response.comments.size());
+    }
+
+    private void saveComments(final GetCommentsResponse response) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ContentResolver contentResolver = null;
+                if (getActivity() != null) {
+                    contentResolver = getActivity().getContentResolver();
+                }
+                if (contentResolver != null) {
+                    for (GetCommentsResponse.Comment comment : response.comments) {
+                        ContentValues values = new ContentValues(8);
+                        values.put(CommentsTable._ID, comment.id);
+                        values.put(CommentsTable.PARENT_ID_COLUMN, comment.parentId);
+                        values.put(CommentsTable.ENTRY_ID_COLUMN, comment.entryId);
+                        values.put(CommentsTable.TEXT_COLUMN, comment.text);
+                        values.put(CommentsTable.DATE_COLUMN, comment.getDate());
+                        values.put(CommentsTable.AUTHOR_ID_COLUMN, comment.authorId);
+                        values.put(CommentsTable.AUTHOR_NAME_COLUMN, comment.authorName);
+                        values.put(CommentsTable.VOTE_COUNT_COLUMN, comment.voteCount);
+
+                        contentResolver.insert(DevlifeProviderMetadata.COMMENTS_URI, values);
+                    }
+                }
+
+                //show comments
+                loadCommentsFromCache();
+            }
+        }).start();
     }
 
     private class GifLoader extends AsyncTask<String, Void, String> {
@@ -180,11 +269,8 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
                 Toast.makeText(getActivity(), R.string.error_loading_gif, Toast.LENGTH_LONG).show();
             }
 
-            //hide progress
-            Activity activity = getActivity();
-            if (activity != null) {
-                ((DevlifeBaseActivity)activity).hideProgress();
-            }
+            //try t update comments
+            updateComments();
 
             gifLoader = null;
         }

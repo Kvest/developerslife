@@ -1,17 +1,16 @@
 package com.kvest.developerslife.ui.activity;
 
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.kvest.developerslife.R;
 import com.kvest.developerslife.contentprovider.DevlifeProviderMetadata;
+import com.kvest.developerslife.datastorage.table.CommentsTable;
 import com.kvest.developerslife.datastorage.table.PostTable;
 import com.kvest.developerslife.network.VolleyHelper;
 import com.kvest.developerslife.network.request.GetPostsListRequest;
@@ -42,8 +41,15 @@ public class MainActivity extends DevlifeBaseActivity implements PostsListFragme
         findViewById(R.id.test).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //test();
+                //testComments();
                 startActivity(new Intent(MainActivity.this, PostsListActivity.class));
+            }
+        });
+
+        findViewById(R.id.test_comments).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                testComments();
             }
         });
 
@@ -52,6 +58,19 @@ public class MainActivity extends DevlifeBaseActivity implements PostsListFragme
 
     private void initVolley() {
         VolleyHelper.getInstance().init(getApplicationContext());
+    }
+
+    private void testComments() {
+        Cursor cursor = getContentResolver().query(DevlifeProviderMetadata.COMMENTS_URI, CommentsTable.FULL_PROJECTION, null,null,null);
+        Log.d("KVEST_TAG", "Whole data:" + cursor.getCount());
+        Log.d("KVEST_TAG", "--------------------------------------------");
+        Log.d("KVEST_TAG", getCursorHeader(cursor));
+        Log.d("KVEST_TAG", "--------------------------------------------");
+        while(cursor.moveToNext()) {
+            Log.d("KVEST_TAG", getCursorData(cursor));
+        }
+        Log.d("KVEST_TAG", "--------------------------------------------");
+        cursor.close();
     }
 
     private void test() {

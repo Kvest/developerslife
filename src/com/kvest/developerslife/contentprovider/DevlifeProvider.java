@@ -9,9 +9,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.Log;
 import com.kvest.developerslife.datastorage.DevlifeSQLStorage;
 import com.kvest.developerslife.datastorage.table.CategoriesTable;
+import com.kvest.developerslife.datastorage.table.CommentsTable;
 import com.kvest.developerslife.datastorage.table.PostTable;
 import com.kvest.developerslife.utility.CategoryHelper;
 
@@ -29,6 +29,8 @@ public class DevlifeProvider extends ContentProvider {
     private static final int LATEST_POSTS_URI_INDICATOR = 2;
     private static final int HOT_POSTS_URI_INDICATOR = 3;
     private static final int TOP_POSTS_URI_INDICATOR = 4;
+    private static final int COMMENTS_URI_INDICATOR = 5;
+    private static final int ENTRY_COMMENTS_URI_INDICATOR = 6;
 
     private static final UriMatcher uriMatcher;
     static
@@ -38,6 +40,8 @@ public class DevlifeProvider extends ContentProvider {
         uriMatcher.addURI(DevlifeProviderMetadata.AUTHORITY, DevlifeProviderMetadata.LATEST_POST_ITEMS_PATH, LATEST_POSTS_URI_INDICATOR);
         uriMatcher.addURI(DevlifeProviderMetadata.AUTHORITY, DevlifeProviderMetadata.HOT_POST_ITEMS_PATH, HOT_POSTS_URI_INDICATOR);
         uriMatcher.addURI(DevlifeProviderMetadata.AUTHORITY, DevlifeProviderMetadata.TOP_POST_ITEMS_PATH, TOP_POSTS_URI_INDICATOR);
+        uriMatcher.addURI(DevlifeProviderMetadata.AUTHORITY, DevlifeProviderMetadata.COMMENTS_PATH, COMMENTS_URI_INDICATOR);
+        uriMatcher.addURI(DevlifeProviderMetadata.AUTHORITY, DevlifeProviderMetadata.ENTRY_COMMENTS_PATH + "/#", ENTRY_COMMENTS_URI_INDICATOR);
     }
 
     @Override
@@ -69,6 +73,13 @@ public class DevlifeProvider extends ContentProvider {
                 }
                 queryBuilder.appendWhere(CategoriesTable.CATEGORY_COLUMN + "=" + selectCategoryId(indicator));
                 sortOrder = "\"" + CategoriesTable.TABLE_NAME  + "\"." + CategoriesTable._ID + " ASC";
+                break;
+            case COMMENTS_URI_INDICATOR :
+                queryBuilder.setTables(CommentsTable.TABLE_NAME);
+                break;
+            case ENTRY_COMMENTS_URI_INDICATOR :
+                queryBuilder.setTables(CommentsTable.TABLE_NAME);
+                queryBuilder.appendWhere(CommentsTable.ENTRY_ID_COLUMN + "=" + uri.getLastPathSegment());
                 break;
             default:
                 throw new IllegalArgumentException("Unknown uri = " + uri);
@@ -108,6 +119,16 @@ public class DevlifeProvider extends ContentProvider {
                         getContext().getContentResolver().notifyChange(resultUri, null);
                         return resultUri;
                     }
+                }
+                break;
+            case COMMENTS_URI_INDICATOR :
+                //replace works as "INSERT OR REPLACE"
+                rowId = db.replace(CommentsTable.TABLE_NAME, null, values);
+                if (rowId > 0)
+                {
+                    Uri resultUri = ContentUris.withAppendedId(uri, rowId);
+                    getContext().getContentResolver().notifyChange(resultUri, null);
+                    return resultUri;
                 }
                 break;
         }
@@ -191,6 +212,8 @@ public class DevlifeProvider extends ContentProvider {
             case LATEST_POSTS_URI_INDICATOR :
             case HOT_POSTS_URI_INDICATOR :
             case TOP_POSTS_URI_INDICATOR : return DevlifeProviderMetadata.CONTENT_TYPE_POST_COLLECTION;
+            case COMMENTS_URI_INDICATOR :
+            case ENTRY_COMMENTS_URI_INDICATOR : return DevlifeProviderMetadata.CONTENT_TYPE_COMMENT_COLLECTION;
             default: throw new IllegalArgumentException("Unknown URI" + uri);
         }
     }

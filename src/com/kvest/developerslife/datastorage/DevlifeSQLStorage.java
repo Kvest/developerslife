@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import com.kvest.developerslife.datastorage.table.CategoriesTable;
+import com.kvest.developerslife.datastorage.table.CommentsTable;
 import com.kvest.developerslife.datastorage.table.PostTable;
 
 /**
@@ -26,6 +27,7 @@ public class DevlifeSQLStorage extends SQLiteOpenHelper {
         //create DB structure
         db.execSQL(PostTable.CREATE_TABLE_SQL);
         db.execSQL(CategoriesTable.CREATE_TABLE_SQL);
+        db.execSQL(CommentsTable.CREATE_TABLE_SQL);
     }
 
     @Override
