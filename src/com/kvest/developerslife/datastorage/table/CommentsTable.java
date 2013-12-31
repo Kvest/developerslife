@@ -26,7 +26,7 @@ public class CommentsTable implements BaseColumns {
 
     public static final String TRIGGER = "CREATE TRIGGER IF NOT EXISTS \"after_post_delete\" AFTER DELETE ON \"" +
             PostTable.TABLE_NAME + "\" BEGIN " +
-            "DELETE FROM \"" + TABLE_NAME + "\" WHERE \"" + ENTRY_ID_COLUMN + "\"=" + "old.\"" + PostTable._ID + "\"); " +
+            "DELETE FROM \"" + TABLE_NAME + "\" WHERE \"" + ENTRY_ID_COLUMN + "\"=" + "old.\"" + PostTable._ID + "\"; " +
             "END;";
 
     public static final String CREATE_TABLE_SQL = "CREATE TABLE \"" + TABLE_NAME + "\" (\"" +
@@ -37,8 +37,7 @@ public class CommentsTable implements BaseColumns {
             DATE_COLUMN + "\" INTEGER DEFAULT 0, \"" +
             AUTHOR_ID_COLUMN + "\" INTEGER DEFAULT 0, \"" +
             AUTHOR_NAME_COLUMN + "\" TEXT DEFAULT \"\", \"" +
-            VOTE_COUNT_COLUMN + "\" INTEGER DEFAULT 0);" +
-            "\n" + TRIGGER;
+            VOTE_COUNT_COLUMN + "\" INTEGER DEFAULT 0);";
 
     public static final String DROP_TABLE_SQL = "DROP TABLE IF EXISTS \"" + TABLE_NAME + "\";";
 }

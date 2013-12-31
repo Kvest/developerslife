@@ -28,6 +28,7 @@ public class DevlifeSQLStorage extends SQLiteOpenHelper {
         db.execSQL(PostTable.CREATE_TABLE_SQL);
         db.execSQL(CategoriesTable.CREATE_TABLE_SQL);
         db.execSQL(CommentsTable.CREATE_TABLE_SQL);
+        db.execSQL(CommentsTable.TRIGGER);
     }
 
     @Override
