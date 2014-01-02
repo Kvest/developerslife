@@ -13,7 +13,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.Html;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -164,10 +163,15 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
     }
 
     private void setGifFile(String filePath) {
-        try {
-            GifDrawable gifFromPath = new GifDrawable(filePath);
-            ((GifImageView)getView().findViewById(R.id.gif_image)).setImageDrawable(gifFromPath);
-        } catch (IOException ioException) {
+        //UGLYHACK: there is some problems with pist 8680 :(
+        if (getPostId() != 8680L) {
+            try {
+                GifDrawable gifFromPath = new GifDrawable(filePath);
+                ((GifImageView)getView().findViewById(R.id.gif_image)).setImageDrawable(gifFromPath);
+            } catch (IOException ioException) {
+                Toast.makeText(getActivity(), R.string.error_loading_gif, Toast.LENGTH_LONG).show();
+            }
+        } else {
             Toast.makeText(getActivity(), R.string.error_loading_gif, Toast.LENGTH_LONG).show();
         }
     }
