@@ -13,7 +13,7 @@ import java.util.Locale;
  * Time: 20:48
  * To change this template use File | Settings | File Templates.
  */
-public class GetCommentsResponse {
+public class GetCommentsResponse extends BaseResponse {
     public static final String DATE_TIME_FORMAT = "dd.MM.yyyy HH:mm";
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_TIME_FORMAT, Locale.ENGLISH);
 

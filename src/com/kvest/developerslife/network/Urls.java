@@ -23,4 +23,8 @@ public abstract class Urls {
     public static String getCommentsUrl(long postId) {
         return DEVLIFE_URL + "/" + COMMENTS_PATH + "/" + Long.toString(postId);
     }
+
+    public static String getPostUrl(long postId) {
+        return DEVLIFE_URL + "/"  + Long.toString(postId) + "?json=true";
+    }
 }

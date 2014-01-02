@@ -13,6 +13,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.Html;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,7 +31,9 @@ import com.kvest.developerslife.datastorage.table.PostTable;
 import com.kvest.developerslife.network.NetworkRequestHelper;
 import com.kvest.developerslife.network.VolleyHelper;
 import com.kvest.developerslife.network.request.GetCommentsRequest;
+import com.kvest.developerslife.network.request.GetPostRequest;
 import com.kvest.developerslife.network.response.GetCommentsResponse;
+import com.kvest.developerslife.network.response.GetPostResponse;
 import com.kvest.developerslife.ui.activity.DevlifeBaseActivity;
 import com.kvest.developerslife.utility.Constants;
 import com.kvest.developerslife.utility.FileUtility;
@@ -190,7 +193,7 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
                 //show comments
                 loadCommentsFromCache();
 
-                //hide progress
+                //hide progress bar
                 Activity activity = getActivity();
                 if (activity != null) {
                     ((DevlifeBaseActivity)activity).hideProgress();
@@ -312,8 +315,64 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
         }).start();
     }
 
+    private void updatePostCache(final GetPostResponse response) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ContentResolver contentResolver = null;
+                if (getActivity() != null) {
+                    contentResolver = getActivity().getContentResolver();
+                    if (contentResolver != null) {
+                        ContentValues values = new ContentValues(4);
+                        values.put(PostTable.AUTHOR_COLUMN, response.author);
+                        values.put(PostTable.DESCRIPTION_COLUMN, response.description);
+                        values.put(PostTable.DATE_COLUMN, response.getDate());
+                        values.put(PostTable.VOTES_COLUMN, response.votes);
+
+                        contentResolver.update(Uri.withAppendedPath(DevlifeProviderMetadata.POST_ITEMS_URI, Long.toString(response.id)),
+                                               values, null, null);
+                    }
+                }
+            }
+        }).start();
+    }
+
     private void updatePost() {
-        //TODO
+        GetPostRequest request = new GetPostRequest(getPostId(), new Response.Listener<GetPostResponse>() {
+            @Override
+            public void onResponse(GetPostResponse response) {
+                //update post cache and view
+                if (!response.isErrorOccur()) {
+                    //update cache
+                    updatePostCache(response);
+
+                    //update view
+                    ((TextView)getView().findViewById(R.id.author)).setText(response.author);;
+                    ((TextView)getView().findViewById(R.id.date)).setText(DATE_FORMAT.format(response.getDate()));
+                    String tmp = getString(R.string.description_html, response.description);
+                    ((TextView)getView().findViewById(R.id.post_description)).setText(Html.fromHtml(tmp));
+                    tmp = getString(R.string.rating_html, response.votes);
+                    ((TextView)getView().findViewById(R.id.post_rating)).setText(Html.fromHtml(tmp));
+                }
+
+                //hide progress bar
+                Activity activity = getActivity();
+                if (activity != null) {
+                    ((DevlifeBaseActivity)activity).hideProgress();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //just hide progress bar
+                Activity activity = getActivity();
+                if (activity != null) {
+                    ((DevlifeBaseActivity)activity).hideProgress();
+                }
+            }
+        });
+        request.setTag(Constants.VOLLEY_COMMON_TAG);
+        VolleyHelper.getInstance().addRequest(request);
     }
 
     private class GifLoader extends AsyncTask<String, Void, String> {

@@ -13,7 +13,7 @@ import java.util.Locale;
  * Time: 23:23
  * To change this template use File | Settings | File Templates.
  */
-public class GetPostsListResponse {
+public class GetPostsListResponse extends BaseResponse {
     public static final String DATE_TIME_FORMAT = "MMM dd, yyyy KK:mm:ss aa";
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_TIME_FORMAT, Locale.ENGLISH);
 
