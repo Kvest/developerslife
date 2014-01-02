@@ -68,7 +68,7 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
     private CommentNode commentsRoot;
     private LinearLayout commentsContainer;
 
-    public static PostDetailsFragment createPostDetailsFragment(long postId) {
+    public static PostDetailsFragment newInstance(long postId) {
         Bundle arguments = new Bundle();
         arguments.putLong(POST_ID_ARGUMENT, postId);
 

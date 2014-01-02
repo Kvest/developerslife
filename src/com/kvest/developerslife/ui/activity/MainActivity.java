@@ -42,7 +42,7 @@ public class MainActivity extends DevlifeBaseActivity implements PostsListFragme
             @Override
             public void onClick(View v) {
                 //testComments();
-                startActivity(new Intent(MainActivity.this, PostsListActivity.class));
+                startActivity(new Intent(MainActivity.this, PostsListsActivity.class));
             }
         });
 
@@ -157,14 +157,14 @@ public class MainActivity extends DevlifeBaseActivity implements PostsListFragme
     }
 
     @Override
-    public void loadMorePosts(int page) {
+    public void loadMorePosts(int category, int page) {
         if (isLoading) {
             return;
         }
         isLoading = true;
 
         Log.d("KVEST_TAG", "page=" + page);
-        GetPostsListRequest request = new GetPostsListRequest(0, page, new Response.Listener<GetPostsListResponse>() {
+        GetPostsListRequest request = new GetPostsListRequest(category, page, new Response.Listener<GetPostsListResponse>() {
             @Override
             public void onResponse(GetPostsListResponse response) {
                 Log.d("KVEST_TAG", "all is ok");

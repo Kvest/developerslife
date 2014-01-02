@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Жизнь разработчиков</string>
+    <string name="app_name">Developers life</string>
     <string name="entry_number">Entry%1$d = {</string>
     <string name="description_html"><![CDATA[<font color="#800080">desc</font> : <font color="#008000">&#39;%1$s&#39;</font> ,]]></string>
     <string name="rating_html"><![CDATA[<font color="#800080">rating</font> : <b><font color="#008000">%1$d</font></b> ,]]></string>
@@ -11,4 +11,12 @@
     <string name="error_loading_gif">Error occurred while loading gif picture</string>
     <string name="error_updating_comments">Error occurred while updating comments</string>
     <string name="refresh">Refresh</string>
+    <string name="latest_func">byDate();</string>
+    <string name="hot_func">hot();</string>
+    <string name="top_func">byRating();</string>
+    <string-array name="category_names">
+        <item>@string/latest_func</item>
+        <item>@string/hot_func</item>
+        <item>@string/top_func</item>
+    </string-array>
 </resources>

@@ -3,6 +3,7 @@ package com.kvest.developerslife.ui.fragment;
 import android.app.Activity;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
@@ -26,6 +27,7 @@ import com.kvest.developerslife.utility.Constants;
  * To change this template use File | Settings | File Templates.
  */
 public class PostsListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+    private static final String CATEGORY_ARGUMENT = "com.kvest.developerslife.ui.fragment.PostsListFragment.CATEGORY";
     private static final int MIN_ITEMS_FOR_MORE_LOAD = 2;
     private static final String[] PROJECTION = {PostTable._ID, PostTable.AUTHOR_COLUMN, PostTable.DESCRIPTION_COLUMN,
                                                 PostTable.DATE_COLUMN, PostTable.PREVIEW_URL_COLUMN};
@@ -36,9 +38,23 @@ public class PostsListFragment extends ListFragment implements LoaderManager.Loa
     private LoadMorePostsListener loadMorePostsListener;
     private int category = CategoryHelper.LATEST_CATEGORY_ID;
 
+    public static PostsListFragment newInstance(int category) {
+        Bundle arguments = new Bundle();
+        arguments.putInt(CATEGORY_ARGUMENT, category);
+
+        PostsListFragment result = new PostsListFragment();
+        result.setArguments(arguments);
+        return result;
+    }
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        //get category from arguments
+        Bundle arguments = getArguments();
+        category = (arguments != null && arguments.containsKey(CATEGORY_ARGUMENT)) ? arguments.getInt(CATEGORY_ARGUMENT)
+                                                                                   : category;
 
         getListView().setCacheColorHint(Color.TRANSPARENT);
 
@@ -50,7 +66,7 @@ public class PostsListFragment extends ListFragment implements LoaderManager.Loa
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 if (totalItemCount > 0 && (totalItemCount - firstVisibleItem - visibleItemCount) < MIN_ITEMS_FOR_MORE_LOAD) {
                     if (loadMorePostsListener != null) {
-                        loadMorePostsListener.loadMorePosts(totalItemCount / Constants.DEFAULT_PAGE_SIZE);
+                        loadMorePostsListener.loadMorePosts(getCategory(), totalItemCount / Constants.DEFAULT_PAGE_SIZE);
                     }
                 }
             }
@@ -91,11 +107,19 @@ public class PostsListFragment extends ListFragment implements LoaderManager.Loa
         } catch (ClassCastException cce) {}
     }
 
+    private Uri getUri() {
+        switch (getCategory()) {
+            case CategoryHelper.LATEST_CATEGORY_ID : return DevlifeProviderMetadata.LATEST_POSTS_ITEMS_URI;
+            case CategoryHelper.HOT_CATEGORY_ID : return DevlifeProviderMetadata.HOT_POSTS_ITEMS_URI;
+            case CategoryHelper.TOP_CATEGORY_ID : return DevlifeProviderMetadata.TOP_POSTS_ITEMS_URI;
+            default: throw new IllegalArgumentException("Unknown category");
+        }
+    }
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
         switch (id) {
-            case LOAD_POSTS_ID : return new CursorLoader(getActivity(), DevlifeProviderMetadata.LATEST_POSTS_ITEMS_URI,
-                                                         PROJECTION, null, null, null);
+            case LOAD_POSTS_ID : return new CursorLoader(getActivity(), getUri(), PROJECTION, null, null, null);
         }
 
         return null;
@@ -105,7 +129,7 @@ public class PostsListFragment extends ListFragment implements LoaderManager.Loa
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         //if list is empty - try to load data
         if (cursor.getCount() == 0 && loadMorePostsListener != null) {
-            loadMorePostsListener.loadMorePosts(0);
+            loadMorePostsListener.loadMorePosts(getCategory(), 0);
         }
 
         adapter.swapCursor(cursor);
@@ -121,6 +145,6 @@ public class PostsListFragment extends ListFragment implements LoaderManager.Loa
     }
 
     public interface LoadMorePostsListener {
-        public void loadMorePosts(int page);
+        public void loadMorePosts(int category, int page);
     }
 }

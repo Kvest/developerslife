@@ -4,4 +4,5 @@
     <color name="var_textcolor">#6262af</color>
     <color name="field_name_textcolor">#800080</color>
     <color name="field_value_textcolor">#008000</color>
+    <color name="category_name_textcolor">#7a7a2b</color>
 </resources>

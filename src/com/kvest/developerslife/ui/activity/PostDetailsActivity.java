@@ -27,7 +27,7 @@ public class PostDetailsActivity extends DevlifeBaseActivity {
         if (savedInstanceState == null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             try {
-                transaction.add(R.id.fragment_container, PostDetailsFragment.createPostDetailsFragment(postId));
+                transaction.add(R.id.fragment_container, PostDetailsFragment.newInstance(postId));
             } finally {
                 transaction.commit();
             }

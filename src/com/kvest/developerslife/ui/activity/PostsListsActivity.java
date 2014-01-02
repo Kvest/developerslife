@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -17,6 +18,7 @@ import com.kvest.developerslife.datastorage.table.PostTable;
 import com.kvest.developerslife.network.VolleyHelper;
 import com.kvest.developerslife.network.request.GetPostsListRequest;
 import com.kvest.developerslife.network.response.GetPostsListResponse;
+import com.kvest.developerslife.ui.adapter.DevlifePagesAdapter;
 import com.kvest.developerslife.ui.fragment.PostsListFragment;
 import com.kvest.developerslife.utility.CategoryHelper;
 import com.kvest.developerslife.utility.Constants;
@@ -28,30 +30,26 @@ import com.kvest.developerslife.utility.Constants;
  * Time: 20:45
  * To change this template use File | Settings | File Templates.
  */
-public class PostsListActivity extends DevlifeBaseActivity implements PostsListFragment.LoadMorePostsListener,
+public class PostsListsActivity extends DevlifeBaseActivity implements PostsListFragment.LoadMorePostsListener,
                                                                       PostsListFragment.OnPostClickListener {
     private static final int REFRESH_MENU_ID = 0;
     private Handler handler = new Handler();
-    private PostsListFragment postsListFragment;
     private boolean isDataLoading;
+
+    private ViewPager pager;
+    private DevlifePagesAdapter pagerAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_container);
+        setContentView(R.layout.posts_lists);
+
+        pager = (ViewPager) findViewById(R.id.pager);
+        pager.setOffscreenPageLimit(0);
+        pagerAdapter = new DevlifePagesAdapter(getSupportFragmentManager(), getResources().getStringArray(R.array.category_names));
+        pager.setAdapter(pagerAdapter);
 
         setDataLoading(false);
-        if (savedInstanceState == null) {
-            postsListFragment = new PostsListFragment();
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            try {
-                transaction.add(R.id.fragment_container, postsListFragment);
-            } finally {
-                transaction.commit();
-            }
-        } else {
-            postsListFragment = (PostsListFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        }
     }
 
     @Override
@@ -71,19 +69,23 @@ public class PostsListActivity extends DevlifeBaseActivity implements PostsListF
         return super.onOptionsItemSelected(item);
     }
 
+    private int getShownCategory() {
+        return pagerAdapter.getCategoryByPageNumber(pager.getCurrentItem());
+    }
+
     @Override
-    public void loadMorePosts(int page) {
+    public void loadMorePosts(int category, int page) {
         if (isDataLoading) {
             return;
         }
         setDataLoading(true);
 
-        loadPosts(postsListFragment.getCategory(), page);
+        loadPosts(category, page);
     }
 
     private void refreshPostsList() {
         //clean cache by category (and the loading will start automatically)
-        switch (postsListFragment.getCategory()) {
+        switch (getShownCategory()) {
             case CategoryHelper.LATEST_CATEGORY_ID :
                 getContentResolver().delete(DevlifeProviderMetadata.LATEST_POSTS_ITEMS_URI, null, null);
                 break;
@@ -103,7 +105,7 @@ public class PostsListActivity extends DevlifeBaseActivity implements PostsListF
                 if (!response.isErrorOccur()) {
                     savePosts(response, category);
                 } else {
-                    Toast.makeText(PostsListActivity.this, getText(R.string.error_loading_posts), Toast.LENGTH_LONG).show();
+                    Toast.makeText(PostsListsActivity.this, getText(R.string.error_loading_posts), Toast.LENGTH_LONG).show();
                     setDataLoading(false);
                 }
             }
@@ -111,7 +113,7 @@ public class PostsListActivity extends DevlifeBaseActivity implements PostsListF
         new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(PostsListActivity.this, getText(R.string.error_loading_posts), Toast.LENGTH_LONG).show();
+                Toast.makeText(PostsListsActivity.this, getText(R.string.error_loading_posts), Toast.LENGTH_LONG).show();
                 setDataLoading(false);
             }
         });
