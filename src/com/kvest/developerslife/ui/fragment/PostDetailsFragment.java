@@ -7,20 +7,24 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.Html;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.kvest.developerslife.R;
 import com.kvest.developerslife.contentprovider.DevlifeProviderMetadata;
+import com.kvest.developerslife.datamodel.CommentNode;
 import com.kvest.developerslife.datastorage.table.CommentsTable;
 import com.kvest.developerslife.datastorage.table.PostTable;
 import com.kvest.developerslife.network.NetworkRequestHelper;
@@ -45,15 +49,22 @@ import java.util.Date;
  * Time: 22:16
  * To change this template use File | Settings | File Templates.
  */
-public class PostDetailsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class PostDetailsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, CommentNode.Visitor {
     private static final String DATE_FORMAT_PATTERN = "dd.MM.yyyy";
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(DATE_FORMAT_PATTERN);
-
     private static final String POST_ID_ARGUMENT = "com.kvest.developerslife.ui.fragment.PostDetailsFragment.POST_ID";
     private static final int LOAD_POST_ID = 0;
     private static final int LOAD_COMMENTS_ID = 1;
+    private static final String[] COMMENTS_PROJECTION = new String[]{CommentsTable._ID, CommentsTable.PARENT_ID_COLUMN,
+                                                                     CommentsTable.VOTE_COUNT_COLUMN, CommentsTable.AUTHOR_NAME_COLUMN,
+                                                                     CommentsTable.DATE_COLUMN, CommentsTable.TEXT_COLUMN };
+    private static final String COMMENTS_ORDERING = "\"" + CommentsTable.DATE_COLUMN + "\" ASC";
+    private static final int COMMENT_MAX_NESTING = 5;
 
     private GifLoader gifLoader;
+    private Handler handler = new Handler();
+    private CommentNode commentsRoot;
+    private LinearLayout commentsContainer;
 
     public static PostDetailsFragment createPostDetailsFragment(long postId) {
         Bundle arguments = new Bundle();
@@ -66,7 +77,11 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        commentsRoot = new CommentNode();
+
         View rootView = inflater.inflate(R.layout.post_details_fragment, container, false);
+
+        commentsContainer = (LinearLayout)rootView.findViewById(R.id.comments);
 
         return rootView;
     }
@@ -100,6 +115,9 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
             case LOAD_POST_ID :
                 Uri uri = Uri.withAppendedPath(DevlifeProviderMetadata.POST_ITEMS_URI, Long.toString(getPostId()));
                 return new CursorLoader(getActivity(), uri, PostTable.FULL_PROJECTION, null, null, null);
+            case LOAD_COMMENTS_ID :
+                uri = Uri.withAppendedPath(DevlifeProviderMetadata.ENTRY_COMMENTS_URI, Long.toString(getPostId()));
+                return new CursorLoader(getActivity(), uri, COMMENTS_PROJECTION, null, null, COMMENTS_ORDERING);
         }
 
         return null;
@@ -107,11 +125,16 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        cursor.moveToFirst();
-        if (!cursor.isAfterLast()) {
-            setContent(cursor);
+        int cursorId = cursorLoader.getId();
+        if (cursorId == LOAD_POST_ID) {
+            cursor.moveToFirst();
+            if (!cursor.isAfterLast()) {
+                setContent(cursor);
+            }
+            cursor.close();
+        } else if (cursorId == LOAD_COMMENTS_ID) {
+            setComments(cursor);
         }
-        cursor.close();
     }
 
     @Override
@@ -129,7 +152,7 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
         ((TextView)root.findViewById(R.id.post_description)).setText(Html.fromHtml(tmp));
         tmp = getString(R.string.rating_html, cursor.getInt(cursor.getColumnIndex(PostTable.VOTES_COLUMN)));
         ((TextView)root.findViewById(R.id.post_rating)).setText(Html.fromHtml(tmp));
-        tmp = getString(R.string.comments_html, 0);
+        tmp = getString(R.string.comments_count_html, 0);
         ((TextView)root.findViewById(R.id.post_comments)).setText(Html.fromHtml(tmp));
 
         //load gif
@@ -147,7 +170,7 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
     }
 
     private void setCommentsCount(int commentsCount) {
-        String tmp = getString(R.string.comments_html, commentsCount);
+        String tmp = getString(R.string.comments_count_html, commentsCount);
         ((TextView)getView().findViewById(R.id.post_comments)).setText(Html.fromHtml(tmp));
     }
 
@@ -159,7 +182,7 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
                 saveComments(response);
 
                 //try to update data about post
-                //TODO
+                updatePost();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -188,9 +211,70 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
         }
     }
 
+    private void setComments(Cursor cursor) {
+        int commentsCount = cursor.getCount();
+        //set comments count
+        setCommentsCount(commentsCount);
+
+        //clean comments
+        commentsRoot.clean();
+
+        //set comments from cursor
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            CommentNode node = cursor2CommentNode(cursor);
+            commentsRoot.addComment(node);
+
+            cursor.moveToNext();
+        }
+
+        //show comments
+        showComments();
+    }
+
     private void showComments() {
-        //TODO
-        //setCommentsCount(response.comments.size());
+        //clear container
+        commentsContainer.removeAllViews();
+
+        //fill container using visitor
+        commentsRoot.visit(this);
+    }
+
+    @Override
+    public void nextNode(CommentNode node, int level) {
+        if (level > 0) {
+            int leftPadding = Math.min(level - 1, COMMENT_MAX_NESTING) * (int)getResources().getDimension(R.dimen.comment_nesting_padding);
+
+            //comment's header
+            TextView header = new TextView(getActivity());
+            header.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.post_details_textsize));
+            String headerText = getString(R.string.comment_header_html, node.rating,
+                                          node.authorName, node.getDate());
+            header.setText(Html.fromHtml(headerText));
+            header.setPadding(leftPadding, 0, 0, 0);
+            commentsContainer.addView(header);
+
+            //comment's text
+            TextView text = new TextView(getActivity());
+            text.setTextColor(getResources().getColor(R.color.field_value_textcolor));
+            text.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.post_details_textsize_big));
+            text.setText(Html.fromHtml(node.text));
+            text.setPadding(leftPadding, 0, 0, (int)getResources().getDimension(R.dimen.comment_nesting_padding_bottom));
+            commentsContainer.addView(text);
+        }
+    }
+
+    private CommentNode cursor2CommentNode(Cursor cursor) {
+        CommentNode node = new CommentNode();
+
+        node.id = cursor.getLong(cursor.getColumnIndex(CommentsTable._ID));
+        node.parentId = cursor.getLong(cursor.getColumnIndex(CommentsTable.PARENT_ID_COLUMN));
+        node.rating = cursor.getInt(cursor.getColumnIndex(CommentsTable.VOTE_COUNT_COLUMN));
+        node.authorName = cursor.getString(cursor.getColumnIndex(CommentsTable.AUTHOR_NAME_COLUMN));
+        node.date = new Date(cursor.getLong(cursor.getColumnIndex(CommentsTable.DATE_COLUMN)));
+        node.text = cursor.getString(cursor.getColumnIndex(CommentsTable.TEXT_COLUMN));
+
+        return node;
     }
 
     private void saveComments(final GetCommentsResponse response) {
@@ -218,9 +302,18 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
                 }
 
                 //show comments
-                loadCommentsFromCache();
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadCommentsFromCache();
+                    }
+                });
             }
         }).start();
+    }
+
+    private void updatePost() {
+        //TODO
     }
 
     private class GifLoader extends AsyncTask<String, Void, String> {

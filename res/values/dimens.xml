@@ -6,4 +6,9 @@
     <dimen name="post_item_preview_margin_left">24dip</dimen>
     <dimen name="post_item_textsize">14sp</dimen>
     <dimen name="post_item_textsize_big">18sp</dimen>
+    <dimen name="post_details_textsize">14sp</dimen>
+    <dimen name="post_details_textsize_big">18sp</dimen>
+    <dimen name="comment_nesting_padding">16dip</dimen>
+    <dimen name="comment_nesting_padding_bottom">6dip</dimen>
+    <dimen name="comments_margin_top">8dip</dimen>
 </resources>

@@ -2,9 +2,10 @@
 <resources>
     <string name="app_name">Жизнь разработчиков</string>
     <string name="entry_number">Entry%1$d = {</string>
-    <string name="description_html"><![CDATA[<font color="#800080">desc</font> : <font color="#008000">%1$s</font> ,]]></string>
+    <string name="description_html"><![CDATA[<font color="#800080">desc</font> : <font color="#008000">&#39;%1$s&#39;</font> ,]]></string>
     <string name="rating_html"><![CDATA[<font color="#800080">rating</font> : <b><font color="#008000">%1$d</font></b> ,]]></string>
-    <string name="comments_html"><![CDATA[<font color="#800080">comments</font> : <b><font color="#008000">%1$d</font></b> ,]]></string>
+    <string name="comments_count_html"><![CDATA[<font color="#800080">comments</font> : <b><font color="#008000">%1$d</font></b> ,]]></string>
+    <string name="comment_header_html"><![CDATA[<font color="#808080">@rating: %1$d<br/>@author: %2$s<br/>@date: %3$s</font>]]></string>
     <string name="error_loading_posts">Error occurred while loading posts</string>
     <string name="error_loading_gif">Error occurred while loading gif picture</string>
     <string name="error_updating_comments">Error occurred while updating comments</string>
