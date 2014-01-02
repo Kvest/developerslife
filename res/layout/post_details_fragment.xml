@@ -136,12 +136,22 @@
             android:textColor="@color/comment_textcolor"
             android:textSize="@dimen/post_details_textsize_big"
             android:text="};" />
+        <TextView
+            android:id="@+id/comments_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/close_bracket"
+            android:layout_marginTop="@dimen/comments_margin"
+            android:layout_marginBottom="@dimen/comments_margin"
+            android:textColor="@color/comment_textcolor"
+            android:textSize="@dimen/post_details_textsize_big"
+            android:textStyle="bold"
+            android:text="@string/comments_label" />
         <LinearLayout
             android:id="@+id/comments"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_below="@id/close_bracket"
-            android:layout_marginTop="@dimen/comments_margin_top" />
+            android:layout_below="@id/comments_label" />
     </RelativeLayout>
 </ScrollView>

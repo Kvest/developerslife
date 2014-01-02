@@ -48,7 +48,6 @@ public class PostsListAdapter extends SimpleCursorAdapter implements SimpleCurso
             return true;
         }
         if (view.getId() == R.id.preview_image) {
-            ((NetworkImageView)view).setDefaultImageResId(R.drawable.ic_launcher);
             ((NetworkImageView)view).setImageUrl(cursor.getString(columnIndex), VolleyHelper.getInstance().getImageLoader());
             return true;
         }
