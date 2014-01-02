@@ -100,7 +100,12 @@ public class PostsListActivity extends DevlifeBaseActivity implements PostsListF
         GetPostsListRequest request = new GetPostsListRequest(category, page, new Response.Listener<GetPostsListResponse>() {
             @Override
             public void onResponse(GetPostsListResponse response) {
-                savePosts(response, category);
+                if (!response.isErrorOccur()) {
+                    savePosts(response, category);
+                } else {
+                    Toast.makeText(PostsListActivity.this, getText(R.string.error_loading_posts), Toast.LENGTH_LONG).show();
+                    setDataLoading(false);
+                }
             }
         },
         new Response.ErrorListener() {

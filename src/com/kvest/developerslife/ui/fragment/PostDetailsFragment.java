@@ -288,7 +288,7 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
                 if (getActivity() != null) {
                     contentResolver = getActivity().getContentResolver();
                 }
-                if (contentResolver != null) {
+                if (contentResolver != null && !response.isErrorOccur()) {
                     for (GetCommentsResponse.Comment comment : response.comments) {
                         ContentValues values = new ContentValues(8);
                         values.put(CommentsTable._ID, comment.id);
@@ -322,16 +322,17 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
                 ContentResolver contentResolver = null;
                 if (getActivity() != null) {
                     contentResolver = getActivity().getContentResolver();
-                    if (contentResolver != null) {
-                        ContentValues values = new ContentValues(4);
-                        values.put(PostTable.AUTHOR_COLUMN, response.author);
-                        values.put(PostTable.DESCRIPTION_COLUMN, response.description);
-                        values.put(PostTable.DATE_COLUMN, response.getDate());
-                        values.put(PostTable.VOTES_COLUMN, response.votes);
+                }
+                if (contentResolver != null) {
+                    ContentValues values = new ContentValues(5);
+                    values.put(PostTable.AUTHOR_COLUMN, response.author);
+                    values.put(PostTable.DESCRIPTION_COLUMN, response.description);
+                    values.put(PostTable.DATE_COLUMN, response.getDate());
+                    values.put(PostTable.VOTES_COLUMN, response.votes);
+                    values.put(PostTable.PREVIEW_URL_COLUMN, response.previewURL);
 
-                        contentResolver.update(Uri.withAppendedPath(DevlifeProviderMetadata.POST_ITEMS_URI, Long.toString(response.id)),
-                                               values, null, null);
-                    }
+                    contentResolver.update(Uri.withAppendedPath(DevlifeProviderMetadata.POST_ITEMS_URI, Long.toString(response.id)),
+                                           values, null, null);
                 }
             }
         }).start();
