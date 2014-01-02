@@ -6,9 +6,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -18,7 +18,6 @@ import com.kvest.developerslife.datastorage.table.PostTable;
 import com.kvest.developerslife.network.VolleyHelper;
 import com.kvest.developerslife.network.request.GetPostsListRequest;
 import com.kvest.developerslife.network.response.GetPostsListResponse;
-import com.kvest.developerslife.ui.adapter.DevlifePagesAdapter;
 import com.kvest.developerslife.ui.fragment.PostsListFragment;
 import com.kvest.developerslife.utility.CategoryHelper;
 import com.kvest.developerslife.utility.Constants;
@@ -35,21 +34,61 @@ public class PostsListsActivity extends DevlifeBaseActivity implements PostsList
     private static final int REFRESH_MENU_ID = 0;
     private Handler handler = new Handler();
     private boolean isDataLoading;
-
-    private ViewPager pager;
-    private DevlifePagesAdapter pagerAdapter;
+    private int shownCategoryId;
+    private PostsListFragment[] fragments = new PostsListFragment[3];
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.posts_lists);
 
-        pager = (ViewPager) findViewById(R.id.pager);
-        pager.setOffscreenPageLimit(0);
-        pagerAdapter = new DevlifePagesAdapter(getSupportFragmentManager(), getResources().getStringArray(R.array.category_names));
-        pager.setAdapter(pagerAdapter);
+        showFragment(CategoryHelper.LATEST_CATEGORY_ID);
+
+        //set button listeners
+        findViewById(R.id.latest_category).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (shownCategoryId != CategoryHelper.LATEST_CATEGORY_ID) {
+                    showFragment(CategoryHelper.LATEST_CATEGORY_ID);
+                }
+            }
+        });
+        findViewById(R.id.hot_category).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (shownCategoryId != CategoryHelper.HOT_CATEGORY_ID) {
+                    showFragment(CategoryHelper.HOT_CATEGORY_ID);
+                }
+            }
+        });
+        findViewById(R.id.top_category).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (shownCategoryId != CategoryHelper.TOP_CATEGORY_ID) {
+                    showFragment(CategoryHelper.TOP_CATEGORY_ID);
+                }
+            }
+        });
 
         setDataLoading(false);
+    }
+
+    private void showFragment(int category) {
+        //save shown category
+        shownCategoryId = category;
+
+        //create fragment if needed
+        if (fragments[shownCategoryId] == null) {
+            fragments[shownCategoryId] = PostsListFragment.newInstance(shownCategoryId);
+        }
+
+        //show fragment
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        try {
+            transaction.replace(R.id.fragment_container, fragments[shownCategoryId]);
+        } finally {
+            transaction.commit();
+        }
     }
 
     @Override
@@ -69,10 +108,6 @@ public class PostsListsActivity extends DevlifeBaseActivity implements PostsList
         return super.onOptionsItemSelected(item);
     }
 
-    private int getShownCategory() {
-        return pagerAdapter.getCategoryByPageNumber(pager.getCurrentItem());
-    }
-
     @Override
     public void loadMorePosts(int category, int page) {
         if (isDataLoading) {
@@ -85,7 +120,7 @@ public class PostsListsActivity extends DevlifeBaseActivity implements PostsList
 
     private void refreshPostsList() {
         //clean cache by category (and the loading will start automatically)
-        switch (getShownCategory()) {
+        switch (shownCategoryId) {
             case CategoryHelper.LATEST_CATEGORY_ID :
                 getContentResolver().delete(DevlifeProviderMetadata.LATEST_POSTS_ITEMS_URI, null, null);
                 break;
