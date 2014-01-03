@@ -2,9 +2,7 @@ package com.kvest.developerslife.ui.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.util.Log;
 import com.kvest.developerslife.ui.fragment.PostsListFragment;
 import com.kvest.developerslife.utility.CategoryHelper;
 
@@ -15,8 +13,8 @@ import com.kvest.developerslife.utility.CategoryHelper;
  * Time: 17:20
  * To change this template use File | Settings | File Templates.
  */
-public class DevlifePagesAdapter extends FragmentPagerAdapter {
-    private static final int PAGES_COUNT = 3;
+public class DevlifePagesAdapter extends FragmentStatePagerAdapter {
+    private static final int PAGES_COUNT = CategoryHelper.CATEGORIES_COUNT;
 
     private String[] categoryNames;
 
@@ -27,11 +25,10 @@ public class DevlifePagesAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        Log.d("KVEST_TAG", "getItem=" + position);
         switch (position) {
             case 0 : return PostsListFragment.newInstance(CategoryHelper.LATEST_CATEGORY_ID);
-            case 1 : return PostsListFragment.newInstance(CategoryHelper.HOT_CATEGORY_ID);
-            case 2 : return PostsListFragment.newInstance(CategoryHelper.TOP_CATEGORY_ID);
+            case 1 : return PostsListFragment.newInstance(CategoryHelper.TOP_CATEGORY_ID);
+            case 2 : return PostsListFragment.newInstance(CategoryHelper.HOT_CATEGORY_ID);
             default : throw new IllegalArgumentException("Can't find page " + position + " for DevlifePagesAdapter");
         }
     }
@@ -55,8 +52,8 @@ public class DevlifePagesAdapter extends FragmentPagerAdapter {
     public int getCategoryByPageNumber(int pageNumber) {
         switch (pageNumber) {
             case 0 : return CategoryHelper.LATEST_CATEGORY_ID;
-            case 1 : return CategoryHelper.HOT_CATEGORY_ID;
-            case 2 : return CategoryHelper.TOP_CATEGORY_ID;
+            case 1 : return CategoryHelper.TOP_CATEGORY_ID;
+            case 2 : return CategoryHelper.HOT_CATEGORY_ID;
             default : throw new IllegalArgumentException("Can't find page " + pageNumber + " for DevlifePagesAdapter");
         }
     }

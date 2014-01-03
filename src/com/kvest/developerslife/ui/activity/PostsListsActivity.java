@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
@@ -34,7 +33,7 @@ public class PostsListsActivity extends DevlifeBaseActivity implements PostsList
                                                                       PostsListFragment.OnPostClickListener {
     private static final int REFRESH_MENU_ID = 0;
     private Handler handler = new Handler();
-    private boolean isDataLoading;
+    private boolean[] isDataLoading = new boolean[CategoryHelper.CATEGORIES_COUNT];
 
     private ViewPager pager;
     private DevlifePagesAdapter pagerAdapter;
@@ -45,11 +44,10 @@ public class PostsListsActivity extends DevlifeBaseActivity implements PostsList
         setContentView(R.layout.posts_lists);
 
         pager = (ViewPager) findViewById(R.id.pager);
-        pager.setOffscreenPageLimit(0);
         pagerAdapter = new DevlifePagesAdapter(getSupportFragmentManager(), getResources().getStringArray(R.array.category_names));
         pager.setAdapter(pagerAdapter);
 
-        setDataLoading(false);
+        initDataLoadingFlags();
     }
 
     @Override
@@ -75,10 +73,10 @@ public class PostsListsActivity extends DevlifeBaseActivity implements PostsList
 
     @Override
     public void loadMorePosts(int category, int page) {
-        if (isDataLoading) {
+        if (isDataLoading[category]) {
             return;
         }
-        setDataLoading(true);
+        setDataLoading(category, true);
 
         loadPosts(category, page);
     }
@@ -106,7 +104,7 @@ public class PostsListsActivity extends DevlifeBaseActivity implements PostsList
                     savePosts(response, category);
                 } else {
                     Toast.makeText(PostsListsActivity.this, getText(R.string.error_loading_posts), Toast.LENGTH_LONG).show();
-                    setDataLoading(false);
+                    setDataLoading(category, false);
                 }
             }
         },
@@ -114,7 +112,7 @@ public class PostsListsActivity extends DevlifeBaseActivity implements PostsList
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(PostsListsActivity.this, getText(R.string.error_loading_posts), Toast.LENGTH_LONG).show();
-                setDataLoading(false);
+                setDataLoading(category, false);
             }
         });
         request.setTag(Constants.VOLLEY_COMMON_TAG);
@@ -151,16 +149,34 @@ public class PostsListsActivity extends DevlifeBaseActivity implements PostsList
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        setDataLoading(false);
+                        setDataLoading(category, false);
                     }
                 });
             }
         }).start();
     }
 
-    private void setDataLoading(boolean value) {
-        isDataLoading = value;
-        if (isDataLoading) {
+    private void initDataLoadingFlags() {
+        for (int i = 0; i < isDataLoading.length; ++i) {
+            isDataLoading[i] = false;
+        }
+
+        hideProgress();
+    }
+
+    private boolean isAnyDataLoading() {
+        for (int i = 0; i < isDataLoading.length; ++i) {
+            if (isDataLoading[i]) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void setDataLoading(int category, boolean value) {
+        isDataLoading[category] = value;
+        if (isAnyDataLoading()) {
             showProgress();
         } else {
             hideProgress();

@@ -31,7 +31,6 @@ public class PostsListFragment extends ListFragment implements LoaderManager.Loa
     private static final int MIN_ITEMS_FOR_MORE_LOAD = 2;
     private static final String[] PROJECTION = {PostTable._ID, PostTable.AUTHOR_COLUMN, PostTable.DESCRIPTION_COLUMN,
                                                 PostTable.DATE_COLUMN, PostTable.PREVIEW_URL_COLUMN};
-    private static final int LOAD_POSTS_ID = 0;
 
     private PostsListAdapter adapter;
     private OnPostClickListener onPostClickListener;
@@ -88,7 +87,7 @@ public class PostsListFragment extends ListFragment implements LoaderManager.Loa
         });
 
         //load cursor
-        getActivity().getSupportLoaderManager().initLoader(LOAD_POSTS_ID, null, this);
+        getActivity().getSupportLoaderManager().initLoader(category, null, this);
     }
 
     public int getCategory() {
@@ -107,19 +106,18 @@ public class PostsListFragment extends ListFragment implements LoaderManager.Loa
         } catch (ClassCastException cce) {}
     }
 
-    private Uri getUri() {
-        switch (getCategory()) {
-            case CategoryHelper.LATEST_CATEGORY_ID : return DevlifeProviderMetadata.LATEST_POSTS_ITEMS_URI;
-            case CategoryHelper.HOT_CATEGORY_ID : return DevlifeProviderMetadata.HOT_POSTS_ITEMS_URI;
-            case CategoryHelper.TOP_CATEGORY_ID : return DevlifeProviderMetadata.TOP_POSTS_ITEMS_URI;
-            default: throw new IllegalArgumentException("Unknown category");
-        }
-    }
-
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
         switch (id) {
-            case LOAD_POSTS_ID : return new CursorLoader(getActivity(), getUri(), PROJECTION, null, null, null);
+            case CategoryHelper.LATEST_CATEGORY_ID : return new CursorLoader(getActivity(),
+                                                                             DevlifeProviderMetadata.LATEST_POSTS_ITEMS_URI,
+                                                                             PROJECTION, null, null, null);
+            case CategoryHelper.HOT_CATEGORY_ID : return new CursorLoader(getActivity(),
+                                                                          DevlifeProviderMetadata.HOT_POSTS_ITEMS_URI,
+                                                                          PROJECTION, null, null, null);
+            case CategoryHelper.TOP_CATEGORY_ID : return new CursorLoader(getActivity(),
+                                                                          DevlifeProviderMetadata.TOP_POSTS_ITEMS_URI,
+                                                                          PROJECTION, null, null, null);
         }
 
         return null;
