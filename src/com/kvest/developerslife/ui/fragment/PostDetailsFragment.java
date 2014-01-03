@@ -352,12 +352,14 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
                     updatePostCache(response);
 
                     //update view
-                    ((TextView)getView().findViewById(R.id.author)).setText(response.author);;
-                    ((TextView)getView().findViewById(R.id.date)).setText(DATE_FORMAT.format(response.getDate()));
-                    String tmp = getString(R.string.description_html, response.description);
-                    ((TextView)getView().findViewById(R.id.post_description)).setText(Html.fromHtml(tmp));
-                    tmp = getString(R.string.rating_html, response.votes);
-                    ((TextView)getView().findViewById(R.id.post_rating)).setText(Html.fromHtml(tmp));
+                    if (isAdded()) {
+                        ((TextView)getView().findViewById(R.id.author)).setText(response.author);
+                        ((TextView)getView().findViewById(R.id.date)).setText(DATE_FORMAT.format(response.getDate()));
+                        String tmp = getString(R.string.description_html, response.description);
+                        ((TextView)getView().findViewById(R.id.post_description)).setText(Html.fromHtml(tmp));
+                        tmp = getString(R.string.rating_html, response.votes);
+                        ((TextView)getView().findViewById(R.id.post_rating)).setText(Html.fromHtml(tmp));
+                    }
                 }
 
                 //hide progress bar
