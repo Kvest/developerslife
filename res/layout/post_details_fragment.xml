@@ -110,6 +110,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/preview_label"
             android:layout_alignParentLeft="true"
+            android:maxWidth="@dimen/image_max_width"
             android:layout_marginTop="@dimen/post_item_preview_margin"
             android:layout_marginBottom="@dimen/post_item_preview_margin"
             android:layout_marginLeft="@dimen/post_item_preview_margin_left" />

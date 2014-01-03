@@ -82,6 +82,7 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
         commentsRoot = new CommentNode();
 
         View rootView = inflater.inflate(R.layout.post_details_fragment, container, false);
+        ((GifImageView)rootView.findViewById(R.id.gif_image)).setMaxWidth((int)getResources().getDimension(R.dimen.image_max_width));
 
         commentsContainer = (LinearLayout)rootView.findViewById(R.id.comments);
 

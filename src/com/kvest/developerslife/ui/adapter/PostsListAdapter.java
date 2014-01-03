@@ -25,10 +25,12 @@ public class PostsListAdapter extends SimpleCursorAdapter implements SimpleCurso
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(DATE_FORMAT_PATTERN);
 
     private Context context;
+    private int maxImageWidth;
 
     public PostsListAdapter(Context context, int layout, Cursor cursor, String[] from, int[] to, int flags) {
         super(context, layout, cursor, from, to, flags);
         this.context = context;
+        maxImageWidth = (int)context.getResources().getDimension(R.dimen.image_max_width);
         setViewBinder(this);
     }
 
@@ -49,6 +51,7 @@ public class PostsListAdapter extends SimpleCursorAdapter implements SimpleCurso
         }
         if (view.getId() == R.id.preview_image) {
             ((NetworkImageView)view).setImageUrl(cursor.getString(columnIndex), VolleyHelper.getInstance().getImageLoader());
+            ((NetworkImageView)view).setMaxWidth(maxImageWidth);
             return true;
         }
 

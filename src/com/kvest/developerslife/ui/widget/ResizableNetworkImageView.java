@@ -13,6 +13,8 @@ import com.android.volley.toolbox.NetworkImageView;
  * To change this template use File | Settings | File Templates.
  */
 public class ResizableNetworkImageView extends NetworkImageView {
+    private int maxWidth = Integer.MAX_VALUE;
+
     public ResizableNetworkImageView(Context context) {
         super(context);
     }
@@ -25,13 +27,21 @@ public class ResizableNetworkImageView extends NetworkImageView {
         super(context, attrs, defStyle);
     }
 
+    public int getMaxWidth() {
+        return maxWidth;
+    }
+
+    public void setMaxWidth(int maxWidth) {
+        this.maxWidth = maxWidth;
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec){
         Drawable d = getDrawable();
 
         if(d!=null){
             // ceil not round - avoid thin vertical gaps along the left/right edges
-            int width = MeasureSpec.getSize(widthMeasureSpec);
+            int width = Math.min(MeasureSpec.getSize(widthMeasureSpec), getMaxWidth());
             int height = (int) Math.ceil((float) width * (float) d.getIntrinsicHeight() / (float) d.getIntrinsicWidth());
             setMeasuredDimension(width, height);
         }else{
