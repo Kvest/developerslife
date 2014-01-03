@@ -43,11 +43,24 @@ public class PostsListsActivity extends DevlifeBaseActivity implements PostsList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.posts_lists);
 
+        initVolley();
+
         pager = (ViewPager) findViewById(R.id.pager);
         pagerAdapter = new DevlifePagesAdapter(getSupportFragmentManager(), getResources().getStringArray(R.array.category_names));
         pager.setAdapter(pagerAdapter);
 
         initDataLoadingFlags();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        VolleyHelper.getInstance().cancelAll(this);
+    }
+
+    private void initVolley() {
+        VolleyHelper.getInstance().init(getApplicationContext());
     }
 
     @Override
@@ -121,7 +134,7 @@ public class PostsListsActivity extends DevlifeBaseActivity implements PostsList
                 setDataLoading(category, false);
             }
         });
-        request.setTag(Constants.VOLLEY_COMMON_TAG);
+        request.setTag(this);
         VolleyHelper.getInstance().addRequest(request);
     }
 

@@ -100,11 +100,12 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
     public void onStop() {
         super.onStop();
 
-        //cancel gif request
+        //cancel gif request and other requests
         if (gifLoader != null) {
             gifLoader.cancel(true);
             gifLoader = null;
         }
+        VolleyHelper.getInstance().cancelAll(this);
     }
 
     private long getPostId() {
@@ -208,7 +209,7 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
                 Toast.makeText(getActivity(), R.string.error_updating_comments, Toast.LENGTH_LONG).show();
             }
         });
-        request.setTag(Constants.VOLLEY_COMMON_TAG);
+        request.setTag(this);
         VolleyHelper.getInstance().addRequest(request);
     }
 
@@ -379,7 +380,7 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
                 }
             }
         });
-        request.setTag(Constants.VOLLEY_COMMON_TAG);
+        request.setTag(this);
         VolleyHelper.getInstance().addRequest(request);
     }
 
