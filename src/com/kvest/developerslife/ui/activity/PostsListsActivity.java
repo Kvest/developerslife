@@ -4,11 +4,10 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -18,6 +17,7 @@ import com.kvest.developerslife.datastorage.table.PostTable;
 import com.kvest.developerslife.network.VolleyHelper;
 import com.kvest.developerslife.network.request.GetPostsListRequest;
 import com.kvest.developerslife.network.response.GetPostsListResponse;
+import com.kvest.developerslife.ui.adapter.DevlifePagesAdapter;
 import com.kvest.developerslife.ui.fragment.PostsListFragment;
 import com.kvest.developerslife.utility.CategoryHelper;
 import com.kvest.developerslife.utility.Constants;
@@ -33,62 +33,21 @@ public class PostsListsActivity extends DevlifeBaseActivity implements PostsList
                                                                       PostsListFragment.OnPostClickListener {
     private static final int REFRESH_MENU_ID = 0;
     private Handler handler = new Handler();
-    private boolean isDataLoading;
-    private int shownCategoryId;
-    private PostsListFragment[] fragments = new PostsListFragment[3];
+    private boolean[] isDataLoading = new boolean[CategoryHelper.CATEGORIES_COUNT];
+
+    private ViewPager pager;
+    private DevlifePagesAdapter pagerAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.posts_lists);
 
-        showFragment(CategoryHelper.LATEST_CATEGORY_ID);
+        pager = (ViewPager) findViewById(R.id.pager);
+        pagerAdapter = new DevlifePagesAdapter(getSupportFragmentManager(), getResources().getStringArray(R.array.category_names));
+        pager.setAdapter(pagerAdapter);
 
-        //set button listeners
-        findViewById(R.id.latest_category).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (shownCategoryId != CategoryHelper.LATEST_CATEGORY_ID) {
-                    showFragment(CategoryHelper.LATEST_CATEGORY_ID);
-                }
-            }
-        });
-        findViewById(R.id.hot_category).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (shownCategoryId != CategoryHelper.HOT_CATEGORY_ID) {
-                    showFragment(CategoryHelper.HOT_CATEGORY_ID);
-                }
-            }
-        });
-        findViewById(R.id.top_category).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (shownCategoryId != CategoryHelper.TOP_CATEGORY_ID) {
-                    showFragment(CategoryHelper.TOP_CATEGORY_ID);
-                }
-            }
-        });
-
-        setDataLoading(false);
-    }
-
-    private void showFragment(int category) {
-        //save shown category
-        shownCategoryId = category;
-
-        //create fragment if needed
-        if (fragments[shownCategoryId] == null) {
-            fragments[shownCategoryId] = PostsListFragment.newInstance(shownCategoryId);
-        }
-
-        //show fragment
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        try {
-            transaction.replace(R.id.fragment_container, fragments[shownCategoryId]);
-        } finally {
-            transaction.commit();
-        }
+        initDataLoadingFlags();
     }
 
     @Override
@@ -108,19 +67,23 @@ public class PostsListsActivity extends DevlifeBaseActivity implements PostsList
         return super.onOptionsItemSelected(item);
     }
 
+    private int getShownCategory() {
+        return pagerAdapter.getCategoryByPageNumber(pager.getCurrentItem());
+    }
+
     @Override
     public void loadMorePosts(int category, int page) {
-        if (isDataLoading) {
+        if (isDataLoading[category]) {
             return;
         }
-        setDataLoading(true);
+        setDataLoading(category, true);
 
         loadPosts(category, page);
     }
 
     private void refreshPostsList() {
         //clean cache by category (and the loading will start automatically)
-        switch (shownCategoryId) {
+        switch (getShownCategory()) {
             case CategoryHelper.LATEST_CATEGORY_ID :
                 getContentResolver().delete(DevlifeProviderMetadata.LATEST_POSTS_ITEMS_URI, null, null);
                 break;
@@ -141,7 +104,7 @@ public class PostsListsActivity extends DevlifeBaseActivity implements PostsList
                     savePosts(response, category);
                 } else {
                     Toast.makeText(PostsListsActivity.this, getText(R.string.error_loading_posts), Toast.LENGTH_LONG).show();
-                    setDataLoading(false);
+                    setDataLoading(category, false);
                 }
             }
         },
@@ -149,7 +112,7 @@ public class PostsListsActivity extends DevlifeBaseActivity implements PostsList
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(PostsListsActivity.this, getText(R.string.error_loading_posts), Toast.LENGTH_LONG).show();
-                setDataLoading(false);
+                setDataLoading(category, false);
             }
         });
         request.setTag(Constants.VOLLEY_COMMON_TAG);
@@ -186,16 +149,34 @@ public class PostsListsActivity extends DevlifeBaseActivity implements PostsList
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        setDataLoading(false);
+                        setDataLoading(category, false);
                     }
                 });
             }
         }).start();
     }
 
-    private void setDataLoading(boolean value) {
-        isDataLoading = value;
-        if (isDataLoading) {
+    private void initDataLoadingFlags() {
+        for (int i = 0; i < isDataLoading.length; ++i) {
+            isDataLoading[i] = false;
+        }
+
+        hideProgress();
+    }
+
+    private boolean isAnyDataLoading() {
+        for (int i = 0; i < isDataLoading.length; ++i) {
+            if (isDataLoading[i]) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void setDataLoading(int category, boolean value) {
+        isDataLoading[category] = value;
+        if (isAnyDataLoading()) {
             showProgress();
         } else {
             hideProgress();

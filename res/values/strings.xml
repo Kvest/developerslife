@@ -14,4 +14,9 @@
     <string name="latest_func">byDate();</string>
     <string name="hot_func">hot();</string>
     <string name="top_func">byRating();</string>
+    <string-array name="category_names">
+        <item>@string/latest_func</item>
+        <item>@string/top_func</item>
+        <item>@string/hot_func</item>
+    </string-array>
 </resources>
