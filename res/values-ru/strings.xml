@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Жизнь разработчиков</string>
+    <string name="comments_label">// Комментарии</string>
+    <string name="error_loading_posts">Ошибка загрузки постов</string>
+    <string name="error_loading_gif">Ошибка загрузки gif-ки</string>
+    <string name="error_updating_comments">Ошибка обновления комментариев</string>
+    <string name="refresh">Обновить</string>
+    <string name="latest_func">byDate();</string>
+    <string name="hot_func">hot();</string>
+    <string name="top_func">byRating();</string>
+    <string name="visit_site">Полная версия: http://developerslife.ru</string>
+</resources>
