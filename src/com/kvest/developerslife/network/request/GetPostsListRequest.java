@@ -9,6 +9,7 @@ import com.android.volley.toolbox.JsonRequest;
 import com.google.gson.Gson;
 import com.kvest.developerslife.network.Urls;
 import com.kvest.developerslife.network.response.GetPostsListResponse;
+import com.kvest.developerslife.utility.CategoryHelper;
 import com.kvest.developerslife.utility.Constants;
 
 import java.io.UnsupportedEncodingException;
@@ -23,9 +24,12 @@ import java.io.UnsupportedEncodingException;
 public class GetPostsListRequest extends JsonRequest<GetPostsListResponse> {
     private static Gson gson = new Gson();
 
+    private int category;
+
     public GetPostsListRequest(int category, int page, Response.Listener<GetPostsListResponse> listener,
                                Response.ErrorListener errorListener) {
         super(Method.GET, Urls.getPostsUrl(category, page, Constants.DEFAULT_PAGE_SIZE), null, listener, errorListener);
+        this.category = category;
     }
 
     @Override
@@ -33,7 +37,11 @@ public class GetPostsListRequest extends JsonRequest<GetPostsListResponse> {
         try {
             //get string response
             String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
-            return Response.success(gson.fromJson(json, GetPostsListResponse.class), HttpHeaderParser.parseCacheHeaders(response));
+            GetPostsListResponse getPostsListResponse = gson.fromJson(json, GetPostsListResponse.class);
+            if (!getPostsListResponse.isErrorOccur()) {
+                CategoryHelper.IS_LIST_FINISHED[category] = getPostsListResponse.result.size() < Constants.DEFAULT_PAGE_SIZE;
+            }
+            return Response.success(getPostsListResponse, HttpHeaderParser.parseCacheHeaders(response));
         } catch (UnsupportedEncodingException e) {
             return Response.error(new ParseError(e));
         }

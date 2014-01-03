@@ -98,7 +98,7 @@ public class PostsListsActivity extends DevlifeBaseActivity implements PostsList
 
         //if nothing was deleted, then event will not occurs. So we need to start load manually
         if (deletedCount == 0) {
-            loadPosts(getShownCategory(), 0);
+            loadMorePosts(getShownCategory(), 0);
         }
     }
 
