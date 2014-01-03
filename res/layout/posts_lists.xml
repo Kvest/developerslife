@@ -3,11 +3,22 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/site_link"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:padding="@dimen/posts_lists_padding"
+        android:textSize="@dimen/link_textsize"
+        android:gravity="center"
+        android:autoLink="web"
+        android:linksClickable="true"
+        android:text="@string/visit_site" />
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"
-        android:paddingBottom="@dimen/posts_lists_padding"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_above="@id/site_link">
         <android.support.v4.view.PagerTabStrip
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
