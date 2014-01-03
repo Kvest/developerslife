@@ -54,7 +54,7 @@ public class PostsListsActivity extends DevlifeBaseActivity implements PostsList
     public boolean onCreateOptionsMenu(Menu menu)
     {
         MenuItemCompat.setShowAsAction(menu.add(0, REFRESH_MENU_ID, 0, getString(R.string.refresh))
-                                            .setIcon(android.R.drawable.ic_popup_sync), MenuItem.SHOW_AS_ACTION_IF_ROOM);
+                                            .setIcon(R.drawable.refresh), MenuItem.SHOW_AS_ACTION_IF_ROOM);
         return true;
     }
 
