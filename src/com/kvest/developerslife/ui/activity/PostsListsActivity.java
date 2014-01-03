@@ -83,16 +83,22 @@ public class PostsListsActivity extends DevlifeBaseActivity implements PostsList
 
     private void refreshPostsList() {
         //clean cache by category (and the loading will start automatically)
+        int deletedCount = -1;
         switch (getShownCategory()) {
             case CategoryHelper.LATEST_CATEGORY_ID :
-                getContentResolver().delete(DevlifeProviderMetadata.LATEST_POSTS_ITEMS_URI, null, null);
+                deletedCount = getContentResolver().delete(DevlifeProviderMetadata.LATEST_POSTS_ITEMS_URI, null, null);
                 break;
             case CategoryHelper.HOT_CATEGORY_ID :
-                getContentResolver().delete(DevlifeProviderMetadata.HOT_POSTS_ITEMS_URI, null, null);
+                deletedCount = getContentResolver().delete(DevlifeProviderMetadata.HOT_POSTS_ITEMS_URI, null, null);
                 break;
             case CategoryHelper.TOP_CATEGORY_ID :
-                getContentResolver().delete(DevlifeProviderMetadata.TOP_POSTS_ITEMS_URI, null, null);
+                deletedCount = getContentResolver().delete(DevlifeProviderMetadata.TOP_POSTS_ITEMS_URI, null, null);
                 break;
+        }
+
+        //if nothing was deleted, then event will not occurs. So we need to start load manually
+        if (deletedCount == 0) {
+            loadPosts(getShownCategory(), 0);
         }
     }
 
