@@ -102,6 +102,8 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
     public void onStop() {
         super.onStop();
 
+        gifView.recycle();
+
         //cancel gif request and other requests
         if (gifLoader != null) {
             gifLoader.cancel(true);
