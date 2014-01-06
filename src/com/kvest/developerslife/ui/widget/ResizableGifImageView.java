@@ -1,9 +1,17 @@
 package com.kvest.developerslife.ui.widget;
 
 import android.content.Context;
+import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
+import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.MotionEvent;
+import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
+
+import java.io.IOException;
 
 /**
  * Created with IntelliJ IDEA.
@@ -15,16 +23,32 @@ import pl.droidsonroids.gif.GifImageView;
 public class ResizableGifImageView extends GifImageView {
     private int maxWidth = Integer.MAX_VALUE;
 
+    private Matrix matrix;
+    private float oldX, oldY;
+    private float density;
+
     public ResizableGifImageView(Context context) {
         super(context);
+        init();
     }
 
     public ResizableGifImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init();
     }
 
     public ResizableGifImageView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        init();
+    }
+
+    private void init() {
+        matrix = new Matrix();
+        setScaleType(ScaleType.MATRIX);
+
+        //get density
+        DisplayMetrics metrics = getContext().getApplicationContext().getResources().getDisplayMetrics();
+        density = metrics.density;
     }
 
     public int getMaxWidth() {
@@ -33,6 +57,16 @@ public class ResizableGifImageView extends GifImageView {
 
     public void setMaxWidth(int maxWidth) {
         this.maxWidth = maxWidth;
+    }
+
+    public void setImageFile(String filePath) throws IOException {
+        GifDrawable gifFromPath = new GifDrawable(filePath);
+        setImageDrawable(gifFromPath);
+
+        //scale image to fit all view size
+        float scaleFactor = getWidth() / (float)gifFromPath.getIntrinsicWidth();
+        matrix.setScale(scaleFactor, scaleFactor);
+        setImageMatrix(matrix);
     }
 
     @Override
@@ -47,5 +81,24 @@ public class ResizableGifImageView extends GifImageView {
         }else{
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         }
+    }
+
+    @Override
+    public boolean onTouchEvent (MotionEvent event) {
+        int action = MotionEventCompat.getActionMasked(event);
+
+        if (action == MotionEvent.ACTION_MOVE) {
+            matrix.preTranslate((event.getX() - oldX) / density, (event.getY() - oldY) / density);
+            oldX = event.getX();
+            oldY = event.getY();
+            setImageMatrix(matrix);
+            return true;
+        } else if (action == MotionEvent.ACTION_DOWN) {
+            oldX = event.getX();
+            oldY = event.getY();
+            return true;
+        }
+
+        return super.onTouchEvent(event);
     }
 }

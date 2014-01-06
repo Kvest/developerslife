@@ -34,10 +34,9 @@ import com.kvest.developerslife.network.request.GetPostRequest;
 import com.kvest.developerslife.network.response.GetCommentsResponse;
 import com.kvest.developerslife.network.response.GetPostResponse;
 import com.kvest.developerslife.ui.activity.DevlifeBaseActivity;
+import com.kvest.developerslife.ui.widget.ResizableGifImageView;
 import com.kvest.developerslife.utility.Constants;
 import com.kvest.developerslife.utility.FileUtility;
-import pl.droidsonroids.gif.GifDrawable;
-import pl.droidsonroids.gif.GifImageView;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,6 +67,8 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
     private CommentNode commentsRoot;
     private LinearLayout commentsContainer;
 
+    private ResizableGifImageView gifView;
+
     public static PostDetailsFragment newInstance(long postId) {
         Bundle arguments = new Bundle();
         arguments.putLong(POST_ID_ARGUMENT, postId);
@@ -81,8 +82,9 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         commentsRoot = new CommentNode();
 
-        View rootView = inflater.inflate(R.layout.post_details_fragment, container, false);
-        ((GifImageView)rootView.findViewById(R.id.gif_image)).setMaxWidth((int)getResources().getDimension(R.dimen.image_max_width));
+        final View rootView = inflater.inflate(R.layout.post_details_fragment, container, false);
+        gifView = ((ResizableGifImageView)rootView.findViewById(R.id.gif_image));
+        gifView.setMaxWidth((int) getResources().getDimension(R.dimen.image_max_width));
 
         commentsContainer = (LinearLayout)rootView.findViewById(R.id.comments);
 
@@ -168,8 +170,7 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
         //UGLYHACK: there is some problems with pist 8680 :(
         if (getPostId() != 8680L) {
             try {
-                GifDrawable gifFromPath = new GifDrawable(filePath);
-                ((GifImageView)getView().findViewById(R.id.gif_image)).setImageDrawable(gifFromPath);
+                gifView.setImageFile(filePath);
             } catch (IOException ioException) {
                 Toast.makeText(getActivity(), R.string.error_loading_gif, Toast.LENGTH_LONG).show();
             }
