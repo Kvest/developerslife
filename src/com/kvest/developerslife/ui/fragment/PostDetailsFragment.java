@@ -67,6 +67,8 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
     private LinearLayout commentsContainer;
 
     private ResizableGifImageView gifView;
+    private ShareReadyListener shareReadyListener;
+    private String descriptionText;
 
     public static PostDetailsFragment newInstance(long postId) {
         Bundle arguments = new Bundle();
@@ -109,6 +111,15 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
             gifLoader = null;
         }
         VolleyHelper.getInstance().cancelAll(this);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        try {
+            shareReadyListener = (ShareReadyListener)activity;
+        } catch (ClassCastException cce) {}
     }
 
     private long getPostId() {
@@ -155,7 +166,8 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
         Date date = new Date(cursor.getLong(cursor.getColumnIndex(PostTable.DATE_COLUMN)));
         ((TextView)root.findViewById(R.id.date)).setText(DATE_FORMAT.format(date));
         ((TextView)root.findViewById(R.id.entry_number)).setText(getString(R.string.entry_number, cursor.getLong(cursor.getColumnIndex(PostTable._ID))));
-        String tmp = getString(R.string.description_html, cursor.getString(cursor.getColumnIndex(PostTable.DESCRIPTION_COLUMN)));
+        descriptionText = cursor.getString(cursor.getColumnIndex(PostTable.DESCRIPTION_COLUMN));
+        String tmp = getString(R.string.description_html, descriptionText);
         ((TextView)root.findViewById(R.id.post_description)).setText(Html.fromHtml(tmp));
         tmp = getString(R.string.rating_html, cursor.getInt(cursor.getColumnIndex(PostTable.VOTES_COLUMN)));
         ((TextView)root.findViewById(R.id.post_rating)).setText(Html.fromHtml(tmp));
@@ -177,6 +189,11 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
             }
         } else {
             Toast.makeText(getActivity(), R.string.error_loading_gif, Toast.LENGTH_LONG).show();
+        }
+
+        //activate sharing
+        if (shareReadyListener != null) {
+            shareReadyListener.onReadyForSharing(descriptionText, filePath);
         }
     }
 
@@ -439,5 +456,9 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
 
             gifLoader = null;
         }
+    }
+
+    public interface ShareReadyListener {
+        public void onReadyForSharing(String description, String filePath);
     }
 }

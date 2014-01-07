@@ -11,6 +11,8 @@
     <string name="error_loading_gif">Error occurred while loading gif picture</string>
     <string name="error_updating_comments">Error occurred while updating comments</string>
     <string name="refresh">Refresh</string>
+    <string name="share">Share</string>
+    <string name="share_error">Error occurred while sharing gif picture</string>
     <string name="latest_func">byDate();</string>
     <string name="hot_func">hot();</string>
     <string name="top_func">byRating();</string>
