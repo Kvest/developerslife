@@ -153,5 +153,83 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_below="@id/comments_label" />
+
+        <!--control buttons-->
+        <RelativeLayout
+            android:id="@+id/control_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignLeft="@id/gif_image"
+            android:layout_alignRight="@id/gif_image"
+            android:layout_alignTop="@id/gif_image"
+            android:layout_alignBottom="@id/gif_image"
+            android:visibility="invisible">
+            <ImageButton
+                android:id="@+id/left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                style="?android:borderlessButtonStyle"
+                android:minHeight="0dip"
+                android:minWidth="0dip"
+                android:padding="@dimen/control_button_padding"
+                android:src="@drawable/left" />
+            <ImageButton
+                android:id="@+id/right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                style="?android:borderlessButtonStyle"
+                android:minHeight="0dip"
+                android:minWidth="0dip"
+                android:padding="@dimen/control_button_padding"
+                android:src="@drawable/right" />
+            <ImageButton
+                android:id="@+id/up"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                style="?android:borderlessButtonStyle"
+                android:minHeight="0dip"
+                android:minWidth="0dip"
+                android:padding="@dimen/control_button_padding"
+                android:src="@drawable/up" />
+            <ImageButton
+                android:id="@+id/down"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                style="?android:borderlessButtonStyle"
+                android:minHeight="0dip"
+                android:minWidth="0dip"
+                android:padding="@dimen/control_button_padding"
+                android:src="@drawable/down" />
+            <ImageButton
+                android:id="@+id/zoom_out"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                style="?android:borderlessButtonStyle"
+                android:minHeight="0dip"
+                android:minWidth="0dip"
+                android:padding="@dimen/control_button_padding"
+                android:src="@drawable/zoom_out" />
+            <ImageButton
+                android:id="@+id/zoom_in"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_toLeftOf="@id/zoom_out"
+                style="?android:borderlessButtonStyle"
+                android:minHeight="0dip"
+                android:minWidth="0dip"
+                android:padding="@dimen/control_button_padding"
+                android:src="@drawable/zoom_in" />
+        </RelativeLayout>
     </RelativeLayout>
 </ScrollView>

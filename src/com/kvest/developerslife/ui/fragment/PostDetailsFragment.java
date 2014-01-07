@@ -16,7 +16,10 @@ import android.text.Html;
 import android.text.util.Linkify;
 import android.util.TypedValue;
 import android.view.*;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.android.volley.Response;
@@ -70,6 +73,11 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
     private ShareReadyListener shareReadyListener;
     private String descriptionText;
 
+    //control buttons
+    private RelativeLayout controlButtonsPane;
+    private Animation disappear;
+    private Animation appear;
+
     public static PostDetailsFragment newInstance(long postId) {
         Bundle arguments = new Bundle();
         arguments.putLong(POST_ID_ARGUMENT, postId);
@@ -84,8 +92,20 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
         commentsRoot = new CommentNode();
 
         final View rootView = inflater.inflate(R.layout.post_details_fragment, container, false);
+
         gifView = ((ResizableGifImageView)rootView.findViewById(R.id.gif_image));
         gifView.setMaxWidth((int) getResources().getDimension(R.dimen.image_max_width));
+        gifView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toogleControlButtonsVisibility();
+            }
+        });
+
+        controlButtonsPane = (RelativeLayout)rootView.findViewById(R.id.control_buttons);
+        initControlButtons(controlButtonsPane);
+        appear = AnimationUtils.loadAnimation(getActivity(), R.anim.appear);
+        disappear = AnimationUtils.loadAnimation(getActivity(), R.anim.disappear);
 
         commentsContainer = (LinearLayout)rootView.findViewById(R.id.comments);
 
@@ -111,6 +131,55 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
             gifLoader = null;
         }
         VolleyHelper.getInstance().cancelAll(this);
+    }
+
+    private void toogleControlButtonsVisibility() {
+        if (controlButtonsPane.getVisibility() == View.INVISIBLE) {
+            controlButtonsPane.setVisibility(View.VISIBLE);
+            controlButtonsPane.startAnimation(appear);
+        } else {
+            controlButtonsPane.setVisibility(View.INVISIBLE);
+            controlButtonsPane.startAnimation(disappear);
+        }
+    }
+
+    private void initControlButtons(RelativeLayout pane) {
+        pane.findViewById(R.id.zoom_in).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gifView.zoomIn();
+            }
+        });
+        pane.findViewById(R.id.zoom_out).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gifView.zoomOut();
+            }
+        });
+        pane.findViewById(R.id.left).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gifView.moveLeft();
+            }
+        });
+        pane.findViewById(R.id.up).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gifView.moveUp();
+            }
+        });
+        pane.findViewById(R.id.right).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gifView.moveRight();
+            }
+        });
+        pane.findViewById(R.id.down).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gifView.moveDown();
+            }
+        });
     }
 
     @Override
