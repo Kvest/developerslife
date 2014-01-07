@@ -1,3 +1,6 @@
+Added:
+1) Links in comments become clickable
+
 1) Share
 1) Favorites
 1)Сортировка коментариев по дате-рейтингу
