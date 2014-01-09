@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Жизнь разработчиков</string>
-    <string name="comments_label">// Комментарии</string>
+    <string name="comments_label">// Комментарии: </string>
+    <string name="by_rating">по рейтингу</string>
+    <string name="by_date">по дате</string>
     <string name="error_loading_posts">Ошибка загрузки постов</string>
     <string name="error_loading_gif">Ошибка загрузки gif-ки</string>
     <string name="error_updating_comments">Ошибка обновления комментариев</string>

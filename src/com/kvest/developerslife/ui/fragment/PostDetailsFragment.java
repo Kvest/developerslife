@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,10 +20,7 @@ import android.util.TypedValue;
 import android.view.*;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.kvest.developerslife.R;
@@ -106,6 +105,31 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
         initControlButtons(controlButtonsPane);
         appear = AnimationUtils.loadAnimation(getActivity(), R.anim.appear);
         disappear = AnimationUtils.loadAnimation(getActivity(), R.anim.disappear);
+
+        ((RadioButton)rootView.findViewById(R.id.by_rating)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    sortCommentsByRating();
+                    buttonView.setPaintFlags(Paint.ANTI_ALIAS_FLAG);
+                } else {
+                    buttonView.setPaintFlags(Paint.ANTI_ALIAS_FLAG | Paint.UNDERLINE_TEXT_FLAG);
+                }
+            }
+        });
+        ((RadioButton)rootView.findViewById(R.id.by_date)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    sortCommentsByDate();
+                    buttonView.setPaintFlags(Paint.ANTI_ALIAS_FLAG);
+                } else {
+                    buttonView.setPaintFlags(Paint.ANTI_ALIAS_FLAG | Paint.UNDERLINE_TEXT_FLAG);
+                }
+            }
+        });
+        ((RadioButton)rootView.findViewById(R.id.by_rating)).setPaintFlags(Paint.ANTI_ALIAS_FLAG | Paint.UNDERLINE_TEXT_FLAG);
+        ((RadioButton)rootView.findViewById(R.id.by_date)).setChecked(true);
 
         commentsContainer = (LinearLayout)rootView.findViewById(R.id.comments);
 
@@ -472,6 +496,14 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
         });
         request.setTag(this);
         VolleyHelper.getInstance().addRequest(request);
+    }
+
+    private void sortCommentsByRating() {
+        //TODO
+    }
+
+    private void sortCommentsByDate() {
+        //TODO
     }
 
     private class GifLoader extends AsyncTask<String, Void, String> {

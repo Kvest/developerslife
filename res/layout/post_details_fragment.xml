@@ -136,23 +136,49 @@
             android:textColor="@color/comment_textcolor"
             android:textSize="@dimen/post_details_textsize_big"
             android:text="};" />
-        <TextView
-            android:id="@+id/comments_label"
+        <RadioGroup
+            android:id="@+id/comments_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:layout_below="@id/close_bracket"
             android:layout_marginTop="@dimen/comments_margin"
-            android:layout_marginBottom="@dimen/comments_margin"
-            android:textColor="@color/comment_textcolor"
-            android:textSize="@dimen/post_details_textsize_big"
-            android:textStyle="bold"
-            android:text="@string/comments_label" />
+            android:layout_marginBottom="@dimen/comments_margin" >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/comment_textcolor"
+                android:textSize="@dimen/post_details_textsize_big"
+                android:textStyle="bold"
+                android:text="@string/comments_label" />
+            <RadioButton
+                android:id="@+id/by_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@android:color/transparent"
+                android:textColor="@color/comment_textcolor"
+                android:textSize="@dimen/post_details_textsize_big"
+                android:textStyle="bold"
+                android:layout_marginLeft="@dimen/comments_sort_left_margin"
+                android:text="@string/by_date" />
+            <RadioButton
+                android:id="@+id/by_rating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@android:color/transparent"
+                android:textColor="@color/comment_textcolor"
+                android:textSize="@dimen/post_details_textsize_big"
+                android:textStyle="bold"
+                android:layout_marginLeft="@dimen/comments_sort_left_margin"
+                android:text="@string/by_rating" />
+        </RadioGroup>
+
         <LinearLayout
             android:id="@+id/comments"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_below="@id/comments_label" />
+            android:layout_below="@id/comments_group" />
 
         <!--control buttons-->
         <RelativeLayout
