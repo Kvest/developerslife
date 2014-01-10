@@ -25,7 +25,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.kvest.developerslife.R;
 import com.kvest.developerslife.contentprovider.DevlifeProviderMetadata;
+import com.kvest.developerslife.datamodel.CommentDateComparator;
 import com.kvest.developerslife.datamodel.CommentNode;
+import com.kvest.developerslife.datamodel.CommentRatingComparator;
 import com.kvest.developerslife.datastorage.table.CommentsTable;
 import com.kvest.developerslife.datastorage.table.PostTable;
 import com.kvest.developerslife.network.NetworkRequestHelper;
@@ -63,10 +65,14 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
     private static final String COMMENTS_ORDERING = "\"" + CommentsTable.DATE_COLUMN + "\" ASC";
     private static final int COMMENT_MAX_NESTING = 5;
 
+    private static final CommentRatingComparator RATING_COMPARATOR = new CommentRatingComparator();
+    private static final CommentDateComparator DATE_COMPARATOR = new CommentDateComparator();
+
     private GifLoader gifLoader;
     private Handler handler = new Handler();
     private CommentNode commentsRoot;
     private LinearLayout commentsContainer;
+    private RadioGroup commentsGroup;
 
     private ResizableGifImageView gifView;
     private ShareReadyListener shareReadyListener;
@@ -106,6 +112,9 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
         appear = AnimationUtils.loadAnimation(getActivity(), R.anim.appear);
         disappear = AnimationUtils.loadAnimation(getActivity(), R.anim.disappear);
 
+        commentsGroup = (RadioGroup)rootView.findViewById(R.id.comments_group);
+        commentsContainer = (LinearLayout)rootView.findViewById(R.id.comments);
+
         ((RadioButton)rootView.findViewById(R.id.by_rating)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -130,8 +139,6 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
         });
         ((RadioButton)rootView.findViewById(R.id.by_rating)).setPaintFlags(Paint.ANTI_ALIAS_FLAG | Paint.UNDERLINE_TEXT_FLAG);
         ((RadioButton)rootView.findViewById(R.id.by_date)).setChecked(true);
-
-        commentsContainer = (LinearLayout)rootView.findViewById(R.id.comments);
 
         return rootView;
     }
@@ -349,6 +356,13 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
             cursor.moveToNext();
         }
 
+        //sort comments
+        if (commentsGroup.getCheckedRadioButtonId() == R.id.by_rating) {
+            commentsRoot.sort(RATING_COMPARATOR);
+        } else {
+            commentsRoot.sort(DATE_COMPARATOR);
+        }
+
         //show comments
         showComments();
     }
@@ -499,11 +513,21 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
     }
 
     private void sortCommentsByRating() {
-        //TODO
+        if (commentsRoot != null) {
+            commentsRoot.sort(RATING_COMPARATOR);
+
+            //reset comments
+            showComments();
+        }
     }
 
     private void sortCommentsByDate() {
-        //TODO
+        if (commentsRoot != null) {
+            commentsRoot.sort(DATE_COMPARATOR);
+
+            //reset comments
+            showComments();
+        }
     }
 
     private class GifLoader extends AsyncTask<String, Void, String> {

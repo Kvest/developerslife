@@ -1,10 +1,7 @@
 package com.kvest.developerslife.datamodel;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -51,6 +48,13 @@ public class CommentNode {
         }
 
         return result;
+    }
+
+    public void sort(Comparator comparator) {
+        Collections.sort(subcomments, comparator);
+        for (CommentNode node : subcomments) {
+            node.sort(comparator);
+        }
     }
 
     public String getDate() {
