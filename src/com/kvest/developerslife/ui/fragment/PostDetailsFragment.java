@@ -395,7 +395,7 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
             text.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.post_details_textsize_big));
             text.setLinksClickable(true);
             text.setAutoLinkMask(Linkify.ALL);
-            text.setText(Html.fromHtml(node.text));
+            text.setText(Html.fromHtml((node.text != null) ? node.text : ""));
             text.setPadding(leftPadding, 0, 0, (int)getResources().getDimension(R.dimen.comment_nesting_padding_bottom));
             commentsContainer.addView(text);
         }
