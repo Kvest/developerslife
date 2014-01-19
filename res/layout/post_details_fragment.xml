@@ -148,16 +148,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/comment_textcolor"
-                android:textSize="@dimen/post_details_textsize_big"
+                android:textSize="@dimen/comments_label_textsize"
                 android:textStyle="bold"
                 android:text="@string/comments_label" />
             <RadioButton
                 android:id="@+id/by_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:button="@android:color/transparent"
+                android:button="@null"
                 android:textColor="@color/comment_textcolor"
-                android:textSize="@dimen/post_details_textsize_big"
+                android:textSize="@dimen/comments_label_textsize"
                 android:textStyle="bold"
                 android:layout_marginLeft="@dimen/comments_sort_left_margin"
                 android:text="@string/by_date" />
@@ -165,9 +165,9 @@
                 android:id="@+id/by_rating"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:button="@android:color/transparent"
+                android:button="@null"
                 android:textColor="@color/comment_textcolor"
-                android:textSize="@dimen/post_details_textsize_big"
+                android:textSize="@dimen/comments_label_textsize"
                 android:textStyle="bold"
                 android:layout_marginLeft="@dimen/comments_sort_left_margin"
                 android:text="@string/by_rating" />
