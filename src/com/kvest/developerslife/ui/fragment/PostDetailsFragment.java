@@ -40,6 +40,7 @@ import com.kvest.developerslife.ui.activity.DevlifeBaseActivity;
 import com.kvest.developerslife.ui.widget.ResizableGifImageView;
 import com.kvest.developerslife.utility.Constants;
 import com.kvest.developerslife.utility.FileUtility;
+import com.kvest.developerslife.utility.PreferenceHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -79,6 +80,7 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
     private String descriptionText;
 
     //control buttons
+    private View controlButtonsHint;
     private RelativeLayout controlButtonsPane;
     private Animation disappear;
     private Animation appear;
@@ -139,6 +141,15 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
         });
         ((RadioButton)rootView.findViewById(R.id.by_rating)).setPaintFlags(Paint.ANTI_ALIAS_FLAG | Paint.UNDERLINE_TEXT_FLAG);
         ((RadioButton)rootView.findViewById(R.id.by_date)).setChecked(true);
+
+        controlButtonsHint = rootView.findViewById(R.id.control_buttons_hint);
+        controlButtonsHint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                controlButtonsHint.setVisibility(View.INVISIBLE);
+                PreferenceHelper.setHintShown(getActivity(), true);
+            }
+        });
 
         return rootView;
     }
@@ -284,6 +295,7 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
         if (getPostId() != 8680L) {
             try {
                 gifView.setImageFile(filePath);
+                controlButtonsHint.setVisibility(PreferenceHelper.getHintShown(getActivity()) ? View.INVISIBLE : View.VISIBLE);
             } catch (IOException ioException) {
                 Toast.makeText(getActivity(), R.string.error_loading_gif, Toast.LENGTH_LONG).show();
             }

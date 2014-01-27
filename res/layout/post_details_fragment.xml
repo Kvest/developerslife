@@ -113,6 +113,16 @@
             android:layout_marginTop="@dimen/post_item_preview_margin"
             android:layout_marginBottom="@dimen/post_item_preview_margin"
             android:layout_marginLeft="@dimen/post_item_preview_margin_left" />
+        <View
+            android:id="@+id/control_buttons_hint"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible"
+            android:layout_alignLeft="@id/gif_image"
+            android:layout_alignTop="@id/gif_image"
+            android:layout_alignRight="@id/gif_image"
+            android:layout_alignBottom="@id/gif_image"
+            android:background="@drawable/control_buttons_hint" />
         <TextView
             android:id="@+id/post_rating"
             android:layout_width="wrap_content"
