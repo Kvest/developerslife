@@ -1,15 +1,11 @@
 package com.kvest.developerslife.ui.fragment;
 
 import android.app.Activity;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.database.Cursor;
 import android.graphics.Paint;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -70,7 +66,6 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
     private static final CommentDateComparator DATE_COMPARATOR = new CommentDateComparator();
 
     private GifLoader gifLoader;
-    private Handler handler = new Handler();
     private CommentNode commentsRoot;
     private LinearLayout commentsContainer;
     private RadioGroup commentsGroup;
@@ -318,8 +313,8 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
         GetCommentsRequest request = new GetCommentsRequest(getPostId(), new Response.Listener<GetCommentsResponse>() {
             @Override
             public void onResponse(GetCommentsResponse response) {
-                //save comments
-                saveComments(response);
+                //show comments
+                loadCommentsFromCache();
 
                 //try to update data about post
                 updatePost();
@@ -424,41 +419,6 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
         node.text = cursor.getString(cursor.getColumnIndex(CommentsTable.TEXT_COLUMN));
 
         return node;
-    }
-
-    private void saveComments(final GetCommentsResponse response) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                ContentResolver contentResolver = null;
-                if (getActivity() != null) {
-                    contentResolver = getActivity().getContentResolver();
-                }
-                if (contentResolver != null && !response.isErrorOccur()) {
-                    for (GetCommentsResponse.Comment comment : response.comments) {
-                        ContentValues values = new ContentValues(8);
-                        values.put(CommentsTable._ID, comment.id);
-                        values.put(CommentsTable.PARENT_ID_COLUMN, comment.parentId);
-                        values.put(CommentsTable.ENTRY_ID_COLUMN, comment.entryId);
-                        values.put(CommentsTable.TEXT_COLUMN, comment.text);
-                        values.put(CommentsTable.DATE_COLUMN, comment.getDate());
-                        values.put(CommentsTable.AUTHOR_ID_COLUMN, comment.authorId);
-                        values.put(CommentsTable.AUTHOR_NAME_COLUMN, comment.authorName);
-                        values.put(CommentsTable.VOTE_COUNT_COLUMN, comment.voteCount);
-
-                        contentResolver.insert(DevlifeProviderMetadata.COMMENTS_URI, values);
-                    }
-                }
-
-                //show comments
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        loadCommentsFromCache();
-                    }
-                });
-            }
-        }).start();
     }
 
     private void updatePost() {

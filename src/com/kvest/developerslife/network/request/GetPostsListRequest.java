@@ -2,7 +2,6 @@ package com.kvest.developerslife.network.request;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.util.Log;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Response;

@@ -40,7 +40,9 @@ public class GetPostRequest extends JsonRequest<GetPostResponse> {
             GetPostResponse getPostResponse = gson.fromJson(json, GetPostResponse.class);
 
             //save data
-            updatePostCache(getPostResponse);
+            if (!getPostResponse.isErrorOccur()) {
+                updatePostCache(getPostResponse);
+            }
 
             return Response.success(getPostResponse, HttpHeaderParser.parseCacheHeaders(response));
         } catch (UnsupportedEncodingException e) {
