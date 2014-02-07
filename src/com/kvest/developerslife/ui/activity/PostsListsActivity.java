@@ -1,9 +1,7 @@
 package com.kvest.developerslife.ui.activity;
 
-import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
@@ -13,14 +11,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.kvest.developerslife.R;
 import com.kvest.developerslife.contentprovider.DevlifeProviderMetadata;
-import com.kvest.developerslife.datastorage.table.PostTable;
 import com.kvest.developerslife.network.VolleyHelper;
 import com.kvest.developerslife.network.request.GetPostsListRequest;
 import com.kvest.developerslife.network.response.GetPostsListResponse;
 import com.kvest.developerslife.ui.adapter.DevlifePagesAdapter;
 import com.kvest.developerslife.ui.fragment.PostsListFragment;
 import com.kvest.developerslife.utility.CategoryHelper;
-import com.kvest.developerslife.utility.Constants;
 
 /**
  * Created with IntelliJ IDEA.
@@ -32,7 +28,6 @@ import com.kvest.developerslife.utility.Constants;
 public class PostsListsActivity extends DevlifeBaseActivity implements PostsListFragment.LoadMorePostsListener,
                                                                       PostsListFragment.OnPostClickListener {
     private static final int REFRESH_MENU_ID = 0;
-    private Handler handler = new Handler();
     private boolean[] isDataLoading = new boolean[CategoryHelper.CATEGORIES_COUNT];
 
     private ViewPager pager;
@@ -119,11 +114,9 @@ public class PostsListsActivity extends DevlifeBaseActivity implements PostsList
         GetPostsListRequest request = new GetPostsListRequest(category, page, new Response.Listener<GetPostsListResponse>() {
             @Override
             public void onResponse(GetPostsListResponse response) {
-                if (!response.isErrorOccur()) {
-                    savePosts(response, category);
-                } else {
+                setDataLoading(category, false);
+                if (response.isErrorOccur()) {
                     Toast.makeText(PostsListsActivity.this, getText(R.string.error_loading_posts), Toast.LENGTH_LONG).show();
-                    setDataLoading(category, false);
                 }
             }
         },
@@ -136,43 +129,6 @@ public class PostsListsActivity extends DevlifeBaseActivity implements PostsList
         });
         request.setTag(this);
         VolleyHelper.getInstance().addRequest(request);
-    }
-
-    private void savePosts(final GetPostsListResponse response, final int category) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                for (GetPostsListResponse.Post post : response.result)  {
-                    ContentValues values = new ContentValues(6);
-                    values.put(PostTable._ID, post.id);
-                    values.put(PostTable.AUTHOR_COLUMN, post.author);
-                    values.put(PostTable.DESCRIPTION_COLUMN, post.description);
-                    values.put(PostTable.DATE_COLUMN, post.getDate());
-                    values.put(PostTable.VOTES_COLUMN, post.votes);
-                    values.put(PostTable.GIF_URL_COLUMN, post.gifURL);
-                    values.put(PostTable.PREVIEW_URL_COLUMN, post.previewURL);
-
-                    switch (category) {
-                        case CategoryHelper.LATEST_CATEGORY_ID :
-                            getContentResolver().insert(DevlifeProviderMetadata.LATEST_POSTS_ITEMS_URI, values);
-                            break;
-                        case CategoryHelper.HOT_CATEGORY_ID :
-                            getContentResolver().insert(DevlifeProviderMetadata.HOT_POSTS_ITEMS_URI, values);
-                            break;
-                        case CategoryHelper.TOP_CATEGORY_ID :
-                            getContentResolver().insert(DevlifeProviderMetadata.TOP_POSTS_ITEMS_URI, values);
-                            break;
-                    }
-                }
-
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        setDataLoading(category, false);
-                    }
-                });
-            }
-        }).start();
     }
 
     private void initDataLoadingFlags() {
