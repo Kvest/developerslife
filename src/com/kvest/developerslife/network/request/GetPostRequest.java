@@ -1,11 +1,17 @@
 package com.kvest.developerslife.network.request;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.net.Uri;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonRequest;
 import com.google.gson.Gson;
+import com.kvest.developerslife.application.DevlifeApplication;
+import com.kvest.developerslife.contentprovider.DevlifeProviderMetadata;
+import com.kvest.developerslife.datastorage.table.PostTable;
 import com.kvest.developerslife.network.Urls;
 import com.kvest.developerslife.network.response.GetPostResponse;
 
@@ -31,9 +37,27 @@ public class GetPostRequest extends JsonRequest<GetPostResponse> {
         try {
             //get string response
             String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
-            return Response.success(gson.fromJson(json, GetPostResponse.class), HttpHeaderParser.parseCacheHeaders(response));
+            GetPostResponse getPostResponse = gson.fromJson(json, GetPostResponse.class);
+
+            //save data
+            updatePostCache(getPostResponse);
+
+            return Response.success(getPostResponse, HttpHeaderParser.parseCacheHeaders(response));
         } catch (UnsupportedEncodingException e) {
             return Response.error(new ParseError(e));
         }
+    }
+
+    private void updatePostCache(GetPostResponse response) {
+        ContentValues values = new ContentValues(5);
+        values.put(PostTable.AUTHOR_COLUMN, response.author);
+        values.put(PostTable.DESCRIPTION_COLUMN, response.description);
+        values.put(PostTable.DATE_COLUMN, response.getDate());
+        values.put(PostTable.VOTES_COLUMN, response.votes);
+        values.put(PostTable.PREVIEW_URL_COLUMN, response.previewURL);
+
+        ContentResolver contentResolver = DevlifeApplication.getApplication().getContentResolver();
+        contentResolver.update(Uri.withAppendedPath(DevlifeProviderMetadata.POST_ITEMS_URI, Long.toString(response.id)), values, null, null);
+
     }
 }

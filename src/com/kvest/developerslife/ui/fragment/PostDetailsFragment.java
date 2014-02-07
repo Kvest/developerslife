@@ -461,38 +461,12 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
         }).start();
     }
 
-    private void updatePostCache(final GetPostResponse response) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                ContentResolver contentResolver = null;
-                if (getActivity() != null) {
-                    contentResolver = getActivity().getContentResolver();
-                }
-                if (contentResolver != null) {
-                    ContentValues values = new ContentValues(5);
-                    values.put(PostTable.AUTHOR_COLUMN, response.author);
-                    values.put(PostTable.DESCRIPTION_COLUMN, response.description);
-                    values.put(PostTable.DATE_COLUMN, response.getDate());
-                    values.put(PostTable.VOTES_COLUMN, response.votes);
-                    values.put(PostTable.PREVIEW_URL_COLUMN, response.previewURL);
-
-                    contentResolver.update(Uri.withAppendedPath(DevlifeProviderMetadata.POST_ITEMS_URI, Long.toString(response.id)),
-                                           values, null, null);
-                }
-            }
-        }).start();
-    }
-
     private void updatePost() {
         GetPostRequest request = new GetPostRequest(getPostId(), new Response.Listener<GetPostResponse>() {
             @Override
             public void onResponse(GetPostResponse response) {
                 //update post cache and view
                 if (!response.isErrorOccur()) {
-                    //update cache
-                    updatePostCache(response);
-
                     //update view
                     if (isAdded()) {
                         ((TextView)getView().findViewById(R.id.author)).setText(response.author);
