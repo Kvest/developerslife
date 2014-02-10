@@ -86,7 +86,7 @@ public class PostsListFragment extends ListFragment implements LoaderManager.Loa
         });
 
         //load cursor
-        getActivity().getSupportLoaderManager().initLoader(category, null, this);
+        getLoaderManager().initLoader(category, null, this);
     }
 
     public int getCategory() {
