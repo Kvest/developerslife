@@ -160,8 +160,6 @@ public class PostsListsActivity extends DevlifeBaseActivity implements PostsList
 
     @Override
     public void onPostClick(long postId) {
-        Intent intent = new Intent(this, PostDetailsActivity.class);
-        intent.putExtra(PostDetailsActivity.POST_ID_EXTRA, postId);
-        startActivity(intent);
+        PostDetailsActivity.start(this, postId);
     }
 }

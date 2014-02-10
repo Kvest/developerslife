@@ -1,5 +1,6 @@
 package com.kvest.developerslife.ui.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,14 +21,20 @@ import com.kvest.developerslife.ui.fragment.PostDetailsFragment;
  * To change this template use File | Settings | File Templates.
  */
 public class PostDetailsActivity extends DevlifeBaseActivity implements PostDetailsFragment.ShareReadyListener {
-    public static final String SHARE_CONTENT_TYPE = "image/gif";
-    public static final String POST_ID_EXTRA = "com.kvest.developerslife.ui.activity.PostDetailsActivity.POST_ID";
+    private static final String SHARE_CONTENT_TYPE = "image/gif";
+    private static final String POST_ID_EXTRA = "com.kvest.developerslife.ui.activity.PostDetailsActivity.POST_ID";
     private static final int SHARE_MENU_ID = 0;
 
     private long postId;
 
     private String description = null;
     private String gifFilePath = null;
+
+    public static void start(Context context, long postId) {
+        Intent intent = new Intent(context, PostDetailsActivity.class);
+        intent.putExtra(POST_ID_EXTRA, postId);
+        context.startActivity(intent);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
