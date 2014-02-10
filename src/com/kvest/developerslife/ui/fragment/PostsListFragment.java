@@ -71,10 +71,7 @@ public class PostsListFragment extends ListFragment implements LoaderManager.Loa
         });
 
         //create and set adapter
-        String[] from = {PostTable.AUTHOR_COLUMN, PostTable.DATE_COLUMN, PostTable._ID, PostTable.DESCRIPTION_COLUMN,
-                         PostTable.PREVIEW_URL_COLUMN};
-        int[] to = {R.id.author, R.id.date, R.id.entry_number, R.id.post_description, R.id.preview_image};
-        adapter = new PostsListAdapter(getActivity(), R.layout.posts_list_item, null, from, to, PostsListAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+        adapter = new PostsListAdapter(getActivity(), PostsListAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         setListAdapter(adapter);
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
