@@ -150,8 +150,8 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
         getLoaderManager().initLoader(LOAD_POST_ID, null, this);
     }

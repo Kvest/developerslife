@@ -81,6 +81,11 @@ public class PostsListFragment extends ListFragment implements LoaderManager.Loa
                 }
             }
         });
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
         //load cursor
         getLoaderManager().initLoader(category, null, this);
