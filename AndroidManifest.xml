@@ -29,6 +29,7 @@
 
         <provider
             android:name=".contentprovider.DevlifeProvider"
-            android:authorities="com.kvest.developerslife.contentprovider.DevlifeProvider" />
+            android:authorities="com.kvest.developerslife.contentprovider.DevlifeProvider"
+            android:exported="false"/>
     </application>
 </manifest>

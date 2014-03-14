@@ -255,7 +255,7 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
             if (!cursor.isAfterLast()) {
                 setContent(cursor);
             }
-            cursor.close();
+            cursorLoader.stopLoading();
         } else if (cursorId == LOAD_COMMENTS_ID) {
             setComments(cursor);
         }
