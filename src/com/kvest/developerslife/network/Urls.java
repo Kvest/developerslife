@@ -12,6 +12,7 @@ import com.kvest.developerslife.utility.CategoryHelper;
 public abstract class Urls {
     public static final String DEVLIFE_URL = " http://developerslife.ru";
     public static final String COMMENTS_PATH = "comments/entry";
+    public static final String RANDOM_PATH = "random";
 
     public static final String PAGE_SIZE_PARAM = "pageSize";
 
@@ -26,5 +27,9 @@ public abstract class Urls {
 
     public static String getPostUrl(long postId) {
         return DEVLIFE_URL + "/"  + Long.toString(postId) + "?json=true";
+    }
+
+    public static String getRandomPostUrl() {
+        return DEVLIFE_URL + "/"  + RANDOM_PATH + "?json=true";
     }
 }
