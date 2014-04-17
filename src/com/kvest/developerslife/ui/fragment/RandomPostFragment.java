@@ -11,4 +11,8 @@ import android.support.v4.app.Fragment;
  */
 public class RandomPostFragment extends Fragment {
 
+
+    public void refresh() {
+        //TODO
+    }
 }

@@ -10,8 +10,5 @@
     <string name="refresh">Обновить</string>
     <string name="share">Поделиться</string>
     <string name="share_error">Ошибка шаринга gif-ки</string>
-    <string name="latest_func">byDate();</string>
-    <string name="hot_func">hot();</string>
-    <string name="top_func">byRating();</string>
     <string name="visit_site">Полная версия: http://developerslife.ru</string>
 </resources>

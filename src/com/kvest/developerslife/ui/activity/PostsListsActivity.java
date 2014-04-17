@@ -1,6 +1,5 @@
 package com.kvest.developerslife.ui.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
@@ -16,6 +15,7 @@ import com.kvest.developerslife.network.request.GetPostsListRequest;
 import com.kvest.developerslife.network.response.GetPostsListResponse;
 import com.kvest.developerslife.ui.adapter.DevlifePagesAdapter;
 import com.kvest.developerslife.ui.fragment.PostsListFragment;
+import com.kvest.developerslife.ui.fragment.RandomPostFragment;
 import com.kvest.developerslife.utility.CategoryHelper;
 
 /**
@@ -101,6 +101,9 @@ public class PostsListsActivity extends DevlifeBaseActivity implements PostsList
                 break;
             case CategoryHelper.TOP_CATEGORY_ID :
                 deletedCount = getContentResolver().delete(DevlifeProviderMetadata.TOP_POSTS_ITEMS_URI, null, null);
+                break;
+            case CategoryHelper.RANDOM_CATEGORY_ID :
+                ((RandomPostFragment)pagerAdapter.getItem(pager.getCurrentItem())).refresh();
                 break;
         }
 

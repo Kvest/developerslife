@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import com.kvest.developerslife.ui.fragment.PostsListFragment;
+import com.kvest.developerslife.ui.fragment.RandomPostFragment;
 import com.kvest.developerslife.utility.CategoryHelper;
 
 /**
@@ -17,6 +18,7 @@ public class DevlifePagesAdapter extends FragmentStatePagerAdapter {
     private static final int PAGES_COUNT = CategoryHelper.CATEGORIES_COUNT;
 
     private String[] categoryNames;
+    private Fragment[] fragments = new Fragment[PAGES_COUNT];
 
     public DevlifePagesAdapter(FragmentManager fragmentManager, String[] categoryNames) {
         super(fragmentManager);
@@ -25,12 +27,25 @@ public class DevlifePagesAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        switch (position) {
-            case 0 : return PostsListFragment.newInstance(CategoryHelper.LATEST_CATEGORY_ID);
-            case 1 : return PostsListFragment.newInstance(CategoryHelper.TOP_CATEGORY_ID);
-            case 2 : return PostsListFragment.newInstance(CategoryHelper.HOT_CATEGORY_ID);
-            default : throw new IllegalArgumentException("Can't find page " + position + " for DevlifePagesAdapter");
+        if (fragments[position] == null) {
+            switch (position) {
+                case 0 :
+                    fragments[position] = PostsListFragment.newInstance(CategoryHelper.LATEST_CATEGORY_ID);
+                    break;
+                case 1 :
+                    fragments[position] = PostsListFragment.newInstance(CategoryHelper.TOP_CATEGORY_ID);
+                    break;
+                case 2 :
+                    fragments[position] = PostsListFragment.newInstance(CategoryHelper.HOT_CATEGORY_ID);
+                    break;
+                case 3 :
+                    fragments[position] = new RandomPostFragment();
+                    break;
+                default : throw new IllegalArgumentException("Can't find page " + position + " for DevlifePagesAdapter");
+            }
         }
+
+        return fragments[position];
     }
 
     @Override
@@ -44,6 +59,7 @@ public class DevlifePagesAdapter extends FragmentStatePagerAdapter {
             case 0 :
             case 1 :
             case 2 :
+            case 3 :
                 return categoryNames[position];
             default : throw new IllegalArgumentException("Can't find page " + position + " for DevlifePagesAdapter");
         }
@@ -54,6 +70,7 @@ public class DevlifePagesAdapter extends FragmentStatePagerAdapter {
             case 0 : return CategoryHelper.LATEST_CATEGORY_ID;
             case 1 : return CategoryHelper.TOP_CATEGORY_ID;
             case 2 : return CategoryHelper.HOT_CATEGORY_ID;
+            case 3 : return CategoryHelper.RANDOM_CATEGORY_ID;
             default : throw new IllegalArgumentException("Can't find page " + pageNumber + " for DevlifePagesAdapter");
         }
     }
