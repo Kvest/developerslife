@@ -31,6 +31,7 @@ public class DevlifeProvider extends ContentProvider {
     private static final int TOP_POSTS_URI_INDICATOR = 4;
     private static final int COMMENTS_URI_INDICATOR = 5;
     private static final int ENTRY_COMMENTS_URI_INDICATOR = 6;
+    private static final int RANDOM_POSTS_URI_INDICATOR = 7;
 
     private static final UriMatcher uriMatcher;
     static
@@ -40,6 +41,7 @@ public class DevlifeProvider extends ContentProvider {
         uriMatcher.addURI(DevlifeProviderMetadata.AUTHORITY, DevlifeProviderMetadata.LATEST_POST_ITEMS_PATH, LATEST_POSTS_URI_INDICATOR);
         uriMatcher.addURI(DevlifeProviderMetadata.AUTHORITY, DevlifeProviderMetadata.HOT_POST_ITEMS_PATH, HOT_POSTS_URI_INDICATOR);
         uriMatcher.addURI(DevlifeProviderMetadata.AUTHORITY, DevlifeProviderMetadata.TOP_POST_ITEMS_PATH, TOP_POSTS_URI_INDICATOR);
+        uriMatcher.addURI(DevlifeProviderMetadata.AUTHORITY, DevlifeProviderMetadata.RANDOM_POST_ITEMS_PATH, RANDOM_POSTS_URI_INDICATOR);
         uriMatcher.addURI(DevlifeProviderMetadata.AUTHORITY, DevlifeProviderMetadata.COMMENTS_PATH, COMMENTS_URI_INDICATOR);
         uriMatcher.addURI(DevlifeProviderMetadata.AUTHORITY, DevlifeProviderMetadata.ENTRY_COMMENTS_PATH + "/#", ENTRY_COMMENTS_URI_INDICATOR);
     }
@@ -63,6 +65,7 @@ public class DevlifeProvider extends ContentProvider {
             case LATEST_POSTS_URI_INDICATOR :
             case HOT_POSTS_URI_INDICATOR :
             case TOP_POSTS_URI_INDICATOR :
+            case RANDOM_POSTS_URI_INDICATOR :
                 queryBuilder.setTables("\"" + PostTable.TABLE_NAME  + "\" INNER JOIN \"" + CategoriesTable.TABLE_NAME +
                                        "\" ON \"" + PostTable.TABLE_NAME + "\".\"" + PostTable._ID + "\"=\"" +
                                         CategoriesTable.TABLE_NAME + "\".\"" + CategoriesTable.POST_ID_COLUMN + "\"");
@@ -98,13 +101,14 @@ public class DevlifeProvider extends ContentProvider {
     @Override
     public Uri insert(Uri uri, ContentValues values) {
         SQLiteDatabase db = sqlStorage.getWritableDatabase();
-        long rowId = 0;
+        long rowId;
 
         int indicator = uriMatcher.match(uri);
         switch (indicator) {
             case LATEST_POSTS_URI_INDICATOR :
             case HOT_POSTS_URI_INDICATOR :
             case TOP_POSTS_URI_INDICATOR :
+            case RANDOM_POSTS_URI_INDICATOR :
                 //replace works as "INSERT OR REPLACE"
                 rowId = db.replace(PostTable.TABLE_NAME, null, values);
                 if (rowId > 0)
@@ -141,13 +145,14 @@ public class DevlifeProvider extends ContentProvider {
             case LATEST_POSTS_URI_INDICATOR : return CategoryHelper.LATEST_CATEGORY_ID;
             case HOT_POSTS_URI_INDICATOR : return CategoryHelper.HOT_CATEGORY_ID;
             case TOP_POSTS_URI_INDICATOR : return CategoryHelper.TOP_CATEGORY_ID;
+            case RANDOM_POSTS_URI_INDICATOR : return CategoryHelper.RANDOM_CATEGORY_ID;
             default: return CategoryHelper.UNKNOWN_CATEGORY_ID;
         }
     }
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        int rowsDeleted = 0;
+        int rowsDeleted;
 
         switch (uriMatcher.match(uri)) {
             case LATEST_POSTS_URI_INDICATOR :
@@ -158,6 +163,9 @@ public class DevlifeProvider extends ContentProvider {
                 break;
             case TOP_POSTS_URI_INDICATOR :
                 rowsDeleted = deletePostsByCategory(CategoryHelper.TOP_CATEGORY_ID, selection, selectionArgs);
+                break;
+            case RANDOM_POSTS_URI_INDICATOR :
+                rowsDeleted = deletePostsByCategory(CategoryHelper.RANDOM_CATEGORY_ID, selection, selectionArgs);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown uri = " + uri);
@@ -185,7 +193,7 @@ public class DevlifeProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        int rowsUpdated = 0;
+        int rowsUpdated;
         boolean hasSelection = !TextUtils.isEmpty(selection);
         SQLiteDatabase db = sqlStorage.getWritableDatabase();
 
@@ -211,7 +219,8 @@ public class DevlifeProvider extends ContentProvider {
             case POST_URI_INDICATOR : return DevlifeProviderMetadata.CONTENT_TYPE_POST_SINGLE;
             case LATEST_POSTS_URI_INDICATOR :
             case HOT_POSTS_URI_INDICATOR :
-            case TOP_POSTS_URI_INDICATOR : return DevlifeProviderMetadata.CONTENT_TYPE_POST_COLLECTION;
+            case TOP_POSTS_URI_INDICATOR :
+            case RANDOM_POSTS_URI_INDICATOR : return DevlifeProviderMetadata.CONTENT_TYPE_POST_COLLECTION;
             case COMMENTS_URI_INDICATOR :
             case ENTRY_COMMENTS_URI_INDICATOR : return DevlifeProviderMetadata.CONTENT_TYPE_COMMENT_COLLECTION;
             default: throw new IllegalArgumentException("Unknown URI" + uri);

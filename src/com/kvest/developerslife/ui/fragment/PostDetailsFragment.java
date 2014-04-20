@@ -146,8 +146,8 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onDetach() {
+        super.onDetach();
 
         gifView.recycle();
 
@@ -294,7 +294,10 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
 
     private void setCommentsCount(int commentsCount) {
         String tmp = getString(R.string.comments_count_html, commentsCount);
-        ((TextView)getView().findViewById(R.id.post_comments)).setText(Html.fromHtml(tmp));
+        View view = getView();
+        if (view != null) {
+            ((TextView)view.findViewById(R.id.post_comments)).setText(Html.fromHtml(tmp));
+        }
     }
 
     private void updateComments() {
