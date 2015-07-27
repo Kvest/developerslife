@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/post_item_padding">
+        <TextView
+            android:id="@+id/open_comment_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:textColor="@color/comment_textcolor"
+            android:textSize="@dimen/post_details_textsize"
+            android:text="/**" />
+        <TextView
+            android:id="@+id/author_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/open_comment_label"
+            android:layout_alignParentLeft="true"
+            android:textColor="@color/comment_textcolor"
+            android:textSize="@dimen/post_details_textsize"
+            android:text=" * Author: " />
+        <TextView
+            android:id="@+id/author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/open_comment_label"
+            android:layout_toRightOf="@id/author_label"
+            android:textColor="@color/comment_textcolor"
+            android:textSize="@dimen/post_details_textsize"
+            android:text="" />
+        <TextView
+            android:id="@+id/date_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/author_label"
+            android:layout_alignParentLeft="true"
+            android:textColor="@color/comment_textcolor"
+            android:textSize="@dimen/post_details_textsize"
+            android:text=" * Date: " />
+        <TextView
+            android:id="@+id/date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/author_label"
+            android:layout_toRightOf="@id/date_label"
+            android:textColor="@color/comment_textcolor"
+            android:textSize="@dimen/post_details_textsize"
+            android:text="" />
+        <TextView
+            android:id="@+id/close_comment_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/date_label"
+            android:layout_alignParentLeft="true"
+            android:textColor="@color/comment_textcolor"
+            android:textSize="@dimen/post_details_textsize"
+            android:text=" */" />
+        <TextView
+            android:id="@+id/var_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/close_comment_label"
+            android:layout_alignParentLeft="true"
+            android:textColor="@color/var_textcolor"
+            android:textSize="@dimen/post_details_textsize_big"
+            android:text="var " />
+        <TextView
+            android:id="@+id/entry_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/close_comment_label"
+            android:layout_toRightOf="@id/var_label"
+            android:textColor="@color/comment_textcolor"
+            android:textSize="@dimen/post_details_textsize_big"
+            android:text="" />
+        <TextView
+            android:id="@+id/post_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/entry_number"
+            android:textSize="@dimen/post_details_textsize_big"
+            android:layout_marginLeft="@dimen/post_item_entry_margin" />
+        <TextView
+            android:id="@+id/preview_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/post_description"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="@dimen/post_item_entry_margin"
+            android:textColor="@color/field_name_textcolor"
+            android:textSize="@dimen/post_details_textsize_big"
+            android:text="image " />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/post_description"
+            android:layout_toRightOf="@id/preview_label"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/post_details_textsize_big"
+            android:text=": " />
+        <com.kvest.developerslife.ui.widget.ResizableGifImageView
+            android:id="@+id/gif_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/preview_label"
+            android:layout_alignParentLeft="true"
+            android:layout_marginTop="@dimen/post_item_preview_margin"
+            android:layout_marginBottom="@dimen/post_item_preview_margin"
+            android:layout_marginLeft="@dimen/post_item_preview_margin_left" />
+        <TextView
+            android:id="@+id/post_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/gif_image"
+            android:textSize="@dimen/post_details_textsize_big"
+            android:layout_marginLeft="@dimen/post_item_entry_margin" />
+        <TextView
+            android:id="@+id/post_comments"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/post_rating"
+            android:textSize="@dimen/post_details_textsize_big"
+            android:layout_marginLeft="@dimen/post_item_entry_margin" />
+        <TextView
+            android:id="@+id/close_bracket"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/post_comments"
+            android:layout_alignParentLeft="true"
+            android:textColor="@color/comment_textcolor"
+            android:textSize="@dimen/post_details_textsize_big"
+            android:text="};" />
+        <RadioGroup
+            android:id="@+id/comments_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@id/close_bracket"
+            android:layout_marginTop="@dimen/comments_margin"
+            android:layout_marginBottom="@dimen/comments_margin" >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/comment_textcolor"
+                android:textSize="@dimen/comments_label_textsize"
+                android:textStyle="bold"
+                android:text="@string/comments_label" />
+            <RadioButton
+                android:id="@+id/by_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@null"
+                android:textColor="@color/comment_textcolor"
+                android:textSize="@dimen/comments_label_textsize"
+                android:textStyle="bold"
+                android:layout_marginLeft="@dimen/comments_sort_left_margin"
+                android:text="@string/by_date" />
+            <RadioButton
+                android:id="@+id/by_rating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@null"
+                android:textColor="@color/comment_textcolor"
+                android:textSize="@dimen/comments_label_textsize"
+                android:textStyle="bold"
+                android:layout_marginLeft="@dimen/comments_sort_left_margin"
+                android:text="@string/by_rating" />
+        </RadioGroup>
+
+        <LinearLayout
+            android:id="@+id/comments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_below="@id/comments_group" />
+
+        <!--control buttons-->
+        <RelativeLayout
+            android:id="@+id/control_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignLeft="@id/gif_image"
+            android:layout_alignRight="@id/gif_image"
+            android:layout_alignTop="@id/gif_image"
+            android:layout_alignBottom="@id/gif_image"
+            android:visibility="invisible">
+            <ImageButton
+                android:id="@+id/left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                style="?android:borderlessButtonStyle"
+                android:minHeight="0dip"
+                android:minWidth="0dip"
+                android:padding="@dimen/control_button_padding"
+                android:src="@drawable/left" />
+            <ImageButton
+                android:id="@+id/right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                style="?android:borderlessButtonStyle"
+                android:minHeight="0dip"
+                android:minWidth="0dip"
+                android:padding="@dimen/control_button_padding"
+                android:src="@drawable/right" />
+            <ImageButton
+                android:id="@+id/up"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                style="?android:borderlessButtonStyle"
+                android:minHeight="0dip"
+                android:minWidth="0dip"
+                android:padding="@dimen/control_button_padding"
+                android:src="@drawable/up" />
+            <ImageButton
+                android:id="@+id/down"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                style="?android:borderlessButtonStyle"
+                android:minHeight="0dip"
+                android:minWidth="0dip"
+                android:padding="@dimen/control_button_padding"
+                android:src="@drawable/down" />
+            <ImageButton
+                android:id="@+id/zoom_out"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                style="?android:borderlessButtonStyle"
+                android:minHeight="0dip"
+                android:minWidth="0dip"
+                android:padding="@dimen/control_button_padding"
+                android:src="@drawable/zoom_out" />
+            <ImageButton
+                android:id="@+id/zoom_in"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_toLeftOf="@id/zoom_out"
+                style="?android:borderlessButtonStyle"
+                android:minHeight="0dip"
+                android:minWidth="0dip"
+                android:padding="@dimen/control_button_padding"
+                android:src="@drawable/zoom_in" />
+        </RelativeLayout>
+    </RelativeLayout>
+</ScrollView><!-- From: file:/D:/Projects/AndroidFromIDEA/developerslife/developerslife/src/main/res/layout/post_details_fragment.xml -->

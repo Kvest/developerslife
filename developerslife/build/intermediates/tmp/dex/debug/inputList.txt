@@ -1,0 +1,9 @@
+D:\Projects\AndroidFromIDEA\developerslife\developerslife\build\intermediates\classes\debug
+D:\Projects\AndroidFromIDEA\developerslife\developerslife\build\intermediates\pre-dexed\debug\support-annotations-20.0.0-5b16f73fbc8a40c20d77aefb75b595d0c21c6c23.jar
+D:\Projects\AndroidFromIDEA\developerslife\developerslife\build\intermediates\pre-dexed\debug\bugsense-3.5-ef1576c43d86dbe1cf5396b91380eb2453b68c9f.jar
+D:\Projects\AndroidFromIDEA\developerslife\developerslife\build\intermediates\pre-dexed\debug\classes-e83c151a52db78661baedde0a6b08c5a1464e643.jar
+D:\Projects\AndroidFromIDEA\developerslife\developerslife\build\intermediates\pre-dexed\debug\internal_impl-20.0.0-314639a2d498bfe55d92b1ed1d8707d2d41389da.jar
+D:\Projects\AndroidFromIDEA\developerslife\developerslife\build\intermediates\pre-dexed\debug\android-gif-drawable-1.0.4-5a3e92d9ef8dffd496eb97357fd343c5cc429806.jar
+D:\Projects\AndroidFromIDEA\developerslife\developerslife\build\intermediates\pre-dexed\debug\gson-2.2.4-10ee3226cc7d472475aec44c6fb1a61e93dc2c12.jar
+D:\Projects\AndroidFromIDEA\developerslife\developerslife\build\intermediates\pre-dexed\debug\classes-c45d30f2e84fba95295a5493e569c41289392cbd.jar
+D:\Projects\AndroidFromIDEA\developerslife\developerslife\build\intermediates\pre-dexed\debug\classes-6be43894c25d4dbbd16ef0cfa5a54486b32e394f.jar
