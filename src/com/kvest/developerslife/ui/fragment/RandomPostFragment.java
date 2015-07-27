@@ -58,7 +58,7 @@ public class RandomPostFragment extends Fragment {
                 transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left);
                 transaction.replace(R.id.random_post_container, PostDetailsFragment.newInstance(postId));
             } finally {
-                transaction.commit();
+                transaction.commitAllowingStateLoss();
             }
         }
     }
