@@ -2,6 +2,8 @@ package com.kvest.developerslife.application;
 
 import android.app.Application;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
+
 /**
  * Created with IntelliJ IDEA.
  * User: roman
@@ -21,5 +23,8 @@ public class DevlifeApplication extends Application {
         super.onCreate();
 
         applicaion = this;
+
+        //init fresco
+        Fresco.initialize(this);
     }
 }

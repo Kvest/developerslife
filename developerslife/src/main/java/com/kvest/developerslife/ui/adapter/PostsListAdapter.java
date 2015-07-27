@@ -3,9 +3,7 @@ package com.kvest.developerslife.ui.adapter;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +15,6 @@ import com.kvest.developerslife.network.VolleyHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.zip.Inflater;
 
 /**
  * Created with IntelliJ IDEA.
@@ -40,7 +37,7 @@ public class PostsListAdapter extends CursorAdapter {
 
     public PostsListAdapter(Context context, int flags) {
         super(context, null, flags);
-        maxImageWidth = (int)context.getResources().getDimension(R.dimen.image_max_width);
+        maxImageWidth = (int)context.getResources().getDimension(R.dimen.gif_max_width);
     }
 
     private String getString(Context context, int resId, Object... formatArgs) {

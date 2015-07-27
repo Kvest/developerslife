@@ -15,6 +15,7 @@
     <dimen name="comments_sort_left_margin">-30dip</dimen>
     <dimen name="posts_lists_padding">4dip</dimen>
     <dimen name="link_textsize">16sp</dimen>
-    <dimen name="image_max_width">400dip</dimen>
+    <dimen name="gif_max_width">400dip</dimen>
+    <dimen name="gif_height">250dip</dimen>
     <dimen name="control_button_padding">8dip</dimen>
 </resources>

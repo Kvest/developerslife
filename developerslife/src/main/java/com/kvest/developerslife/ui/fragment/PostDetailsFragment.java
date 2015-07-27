@@ -19,6 +19,10 @@ import android.view.animation.AnimationUtils;
 import android.widget.*;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.facebook.common.util.UriUtil;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.interfaces.DraweeController;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.kvest.developerslife.R;
 import com.kvest.developerslife.contentprovider.DevlifeProviderMetadata;
 import com.kvest.developerslife.datamodel.CommentDateComparator;
@@ -33,12 +37,10 @@ import com.kvest.developerslife.network.request.GetPostRequest;
 import com.kvest.developerslife.network.response.GetCommentsResponse;
 import com.kvest.developerslife.network.response.GetPostResponse;
 import com.kvest.developerslife.ui.activity.DevlifeBaseActivity;
-import com.kvest.developerslife.ui.widget.ResizableGifImageView;
 import com.kvest.developerslife.utility.Constants;
 import com.kvest.developerslife.utility.FileUtility;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -69,14 +71,9 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
     private LinearLayout commentsContainer;
     private RadioGroup commentsGroup;
 
-    private ResizableGifImageView gifView;
+    private SimpleDraweeView gifView;
     private ShareReadyListener shareReadyListener;
     private String descriptionText;
-
-    //control buttons
-    private RelativeLayout controlButtonsPane;
-    private Animation disappear;
-    private Animation appear;
 
     public static PostDetailsFragment newInstance(long postId) {
         Bundle arguments = new Bundle();
@@ -93,19 +90,7 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
 
         final View rootView = inflater.inflate(R.layout.post_details_fragment, container, false);
 
-        gifView = ((ResizableGifImageView)rootView.findViewById(R.id.gif_image));
-        gifView.setMaxWidth((int) getResources().getDimension(R.dimen.image_max_width));
-        gifView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toogleControlButtonsVisibility();
-            }
-        });
-
-        controlButtonsPane = (RelativeLayout)rootView.findViewById(R.id.control_buttons);
-        initControlButtons(controlButtonsPane);
-        appear = AnimationUtils.loadAnimation(getActivity(), R.anim.appear);
-        disappear = AnimationUtils.loadAnimation(getActivity(), R.anim.disappear);
+        gifView = ((SimpleDraweeView)rootView.findViewById(R.id.gif_image));
 
         commentsGroup = (RadioGroup)rootView.findViewById(R.id.comments_group);
         commentsContainer = (LinearLayout)rootView.findViewById(R.id.comments);
@@ -149,63 +134,12 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
     public void onDetach() {
         super.onDetach();
 
-        gifView.recycle();
-
         //cancel gif request and other requests
         if (gifLoader != null) {
             gifLoader.cancel(true);
             gifLoader = null;
         }
         VolleyHelper.getInstance().cancelAll(this);
-    }
-
-    private void toogleControlButtonsVisibility() {
-        if (controlButtonsPane.getVisibility() == View.INVISIBLE) {
-            controlButtonsPane.setVisibility(View.VISIBLE);
-            controlButtonsPane.startAnimation(appear);
-        } else {
-            controlButtonsPane.setVisibility(View.INVISIBLE);
-            controlButtonsPane.startAnimation(disappear);
-        }
-    }
-
-    private void initControlButtons(RelativeLayout pane) {
-        pane.findViewById(R.id.zoom_in).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                gifView.zoomIn();
-            }
-        });
-        pane.findViewById(R.id.zoom_out).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                gifView.zoomOut();
-            }
-        });
-        pane.findViewById(R.id.left).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                gifView.moveLeft();
-            }
-        });
-        pane.findViewById(R.id.up).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                gifView.moveUp();
-            }
-        });
-        pane.findViewById(R.id.right).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                gifView.moveRight();
-            }
-        });
-        pane.findViewById(R.id.down).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                gifView.moveDown();
-            }
-        });
     }
 
     @Override
@@ -275,16 +209,15 @@ public class PostDetailsFragment extends Fragment implements LoaderManager.Loade
     }
 
     private void setGifFile(String filePath) {
-        //UGLYHACK: there is some problems with pist 8680 :(
-        if (getPostId() != 8680L) {
-            try {
-                gifView.setImageFile(filePath);
-            } catch (IOException ioException) {
-                Toast.makeText(getActivity(), R.string.error_loading_gif, Toast.LENGTH_LONG).show();
-            }
-        } else {
-            Toast.makeText(getActivity(), R.string.error_loading_gif, Toast.LENGTH_LONG).show();
-        }
+        Uri uri = new Uri.Builder()
+                .scheme(UriUtil.LOCAL_FILE_SCHEME)
+                .path(filePath)
+                .build();
+        DraweeController controller = Fresco.newDraweeControllerBuilder()
+                .setUri(uri)
+                .setAutoPlayAnimations(true)
+                .build();
+        gifView.setController(controller);
 
         //activate sharing
         if (shareReadyListener != null) {

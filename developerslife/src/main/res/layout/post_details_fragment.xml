@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <RelativeLayout
@@ -104,10 +106,13 @@
             android:textColor="@android:color/black"
             android:textSize="@dimen/post_details_textsize_big"
             android:text=": " />
-        <com.kvest.developerslife.ui.widget.ResizableGifImageView
+        <com.facebook.drawee.view.SimpleDraweeView
+
             android:id="@+id/gif_image"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/gif_height"
+            fresco:actualImageScaleType="fitCenter"
+            android:maxWidth="@dimen/gif_max_width"
             android:layout_below="@id/preview_label"
             android:layout_alignParentLeft="true"
             android:layout_marginTop="@dimen/post_item_preview_margin"
@@ -179,83 +184,5 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_below="@id/comments_group" />
-
-        <!--control buttons-->
-        <RelativeLayout
-            android:id="@+id/control_buttons"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignLeft="@id/gif_image"
-            android:layout_alignRight="@id/gif_image"
-            android:layout_alignTop="@id/gif_image"
-            android:layout_alignBottom="@id/gif_image"
-            android:visibility="invisible">
-            <ImageButton
-                android:id="@+id/left"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                style="?android:borderlessButtonStyle"
-                android:minHeight="0dip"
-                android:minWidth="0dip"
-                android:padding="@dimen/control_button_padding"
-                android:src="@drawable/left" />
-            <ImageButton
-                android:id="@+id/right"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                style="?android:borderlessButtonStyle"
-                android:minHeight="0dip"
-                android:minWidth="0dip"
-                android:padding="@dimen/control_button_padding"
-                android:src="@drawable/right" />
-            <ImageButton
-                android:id="@+id/up"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                style="?android:borderlessButtonStyle"
-                android:minHeight="0dip"
-                android:minWidth="0dip"
-                android:padding="@dimen/control_button_padding"
-                android:src="@drawable/up" />
-            <ImageButton
-                android:id="@+id/down"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                style="?android:borderlessButtonStyle"
-                android:minHeight="0dip"
-                android:minWidth="0dip"
-                android:padding="@dimen/control_button_padding"
-                android:src="@drawable/down" />
-            <ImageButton
-                android:id="@+id/zoom_out"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
-                style="?android:borderlessButtonStyle"
-                android:minHeight="0dip"
-                android:minWidth="0dip"
-                android:padding="@dimen/control_button_padding"
-                android:src="@drawable/zoom_out" />
-            <ImageButton
-                android:id="@+id/zoom_in"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_toLeftOf="@id/zoom_out"
-                style="?android:borderlessButtonStyle"
-                android:minHeight="0dip"
-                android:minWidth="0dip"
-                android:padding="@dimen/control_button_padding"
-                android:src="@drawable/zoom_in" />
-        </RelativeLayout>
     </RelativeLayout>
 </ScrollView>
