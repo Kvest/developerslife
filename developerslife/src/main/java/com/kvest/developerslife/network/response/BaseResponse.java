@@ -1,5 +1,7 @@
 package com.kvest.developerslife.network.response;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Kvest
@@ -8,6 +10,7 @@ package com.kvest.developerslife.network.response;
  * To change this template use File | Settings | File Templates.
  */
 public class BaseResponse {
+    @SerializedName("error")
     protected String error;
 
     public boolean isErrorOccur() {

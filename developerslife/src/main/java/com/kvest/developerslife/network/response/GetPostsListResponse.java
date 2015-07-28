@@ -1,5 +1,7 @@
 package com.kvest.developerslife.network.response;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -17,15 +19,23 @@ public class GetPostsListResponse extends BaseResponse {
     public static final String DATE_TIME_FORMAT = "MMM dd, yyyy KK:mm:ss aa";
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_TIME_FORMAT, Locale.ENGLISH);
 
+    @SerializedName("result")
     public ArrayList<Post> result;
 
     public static class Post {
+        @SerializedName("id")
         public long id;
+        @SerializedName("description")
         public String description;
+        @SerializedName("votes")
         public int votes;
+        @SerializedName("author")
         public String author;
+        @SerializedName("date")
         public String date;
+        @SerializedName("gifURL")
         public String gifURL;
+        @SerializedName("previewURL")
         public String previewURL;
 
         public long getDate() {

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Developers life</string>
-    <string name="entry_number">Entry%1$d = {</string>
-    <string name="description_html"><![CDATA[<font color="#800080">desc</font> : <font color="#008000">&#39;%1$s&#39;</font> ,]]></string>
-    <string name="rating_html"><![CDATA[<font color="#800080">rating</font> : <b><font color="#008000">%1$d</font></b> ,]]></string>
-    <string name="comments_count_html"><![CDATA[<font color="#800080">comments</font> : <b><font color="#008000">%1$d</font></b> ,]]></string>
-    <string name="comment_header_html"><![CDATA[<font color="#808080">@rating: %1$d<br/>@author: %2$s<br/>@date: %3$s</font>]]></string>
+    <string name="entry_number" translatable="false">Entry%1$d = {</string>
+    <string name="description_html" translatable="false"><![CDATA[<font color="#800080">desc</font> : <font color="#008000">&#39;%1$s&#39;</font> ,]]></string>
+    <string name="rating_html" translatable="false"><![CDATA[<font color="#800080">rating</font> : <b><font color="#008000">%1$d</font></b> ,]]></string>
+    <string name="comments_count_html" translatable="false"><![CDATA[<font color="#800080">comments</font> : <b><font color="#008000">%1$d</font></b> ,]]></string>
+    <string name="comment_header_html" translatable="false"><![CDATA[<font color="#808080">@rating: %1$d<br/>@author: %2$s<br/>@date: %3$s</font>]]></string>
     <string name="comments_label">// Comments: </string>
     <string name="by_rating">by rating</string>
     <string name="by_date">by date</string>
@@ -15,10 +15,10 @@
     <string name="refresh">Refresh</string>
     <string name="share">Share</string>
     <string name="share_error">Error occurred while sharing gif picture</string>
-    <string name="latest_func">byDate();</string>
-    <string name="hot_func">hot();</string>
-    <string name="top_func">byRating();</string>
-    <string name="random_func">random();</string>
+    <string name="latest_func" translatable="false">byDate();</string>
+    <string name="hot_func" translatable="false">hot();</string>
+    <string name="top_func" translatable="false">byRating();</string>
+    <string name="random_func" translatable="false">random();</string>
     <string name="visit_site">Visit site: http://developerslife.ru</string>
 
     <string-array name="category_names">
